@@ -97,5 +97,10 @@ public final class Constants {
       DRIVE_BASE_RADIUS,
       new ReplanningConfig());
   }
-  
+  public static class IntakeConstants{
+    public static final int INTAKE_ID = 16;
+  }
+  public static class TransportConstants{
+    public static final int TRANSPORT_ID= 17;
+  }
 }
