@@ -17,6 +17,7 @@ public class Intake extends SubsystemBase {
 
   private final static Intake INTAKE = new Intake();
   
+  /* Returns the intake subsystem*/
   public static Intake getInstance(){
     return INTAKE;
   }

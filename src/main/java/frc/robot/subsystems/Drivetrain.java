@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.subsystems.SwerveModule;
 
 public class Drivetrain extends SubsystemBase {
   private SwerveModule leftFront;
@@ -40,6 +39,11 @@ public class Drivetrain extends SubsystemBase {
 
   private static final Drivetrain drivetrain = new Drivetrain();
 
+  /* 
+  *<p> 
+  *This returns the Drivetrain instead of creating a new subsystem
+  *@return new Drivetrain
+  */
   public static Drivetrain getInstance(){
     return drivetrain;
   }
@@ -115,7 +119,16 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Robot Angle", getHeading());
     SmartDashboard.putString("Angular Speed", new DecimalFormat("#.00").format((-gyro.getRate() / 180)) + "pi rad/s");
   }
-
+/*
+ *<p> 
+ *The method to drive the robot
+ *@param Front speed  The speed the robot moves forward
+ *@param Side speed   The speed the robot moves to the side
+ *@param Turn speed   The speed that the robot turns
+ *@param Field oriented    A boolean for if the it turns/moves based on its field orientation
+ *@param Center of Rotation    A new Translation2d for where the center of rotation is
+ *@param Deadband   A boolean for if it takes into account controller deadband
+ */
   public void swerveDrive(double frontSpeed, double sideSpeed, double turnSpeed, 
     boolean fieldOriented, Translation2d centerOfRotation, boolean deadband){ //Drive with rotational speed control w/ joystick
     if(deadband){
@@ -162,15 +175,15 @@ public class Drivetrain extends SubsystemBase {
     leftBack.resetEncoders();
     rightBack.resetEncoders();
   }
-
+/*Returns the estimated pose */
   public Pose2d getPose(){
     return poseEstimator.getEstimatedPosition();
   }
-
+/* resets the estimaded pose */
   public void resetPose(Pose2d pose) {
     poseEstimator.resetPosition(getHeadingRotation2d(), getModulePositions(), pose);
   }
-
+/*Returns the estimated speed of the robot */
   public ChassisSpeeds getRobotRelativeSpeeds(){
     return SwerveConstants.DRIVE_KINEMATICS.toChassisSpeeds(getModuleStates());
   }
@@ -180,14 +193,15 @@ public class Drivetrain extends SubsystemBase {
     setModuleStates(moduleStates);
   }
 
+  /*Sets the heading of the robot to 0 */
   public void zeroHeading(){
     gyro.setYaw(0);
   }
-
+/* Sets the heading of the gyro to the specified double value */
   public void setHeading(double heading){
     gyro.setYaw(heading);
   }
-
+/* returns the heading */
   public double getHeading(){
     return Math.IEEEremainder(-gyro.getAngle(), 360); //clamp heading between -180 and 180
   }
@@ -195,14 +209,14 @@ public class Drivetrain extends SubsystemBase {
   public Rotation2d getHeadingRotation2d(){
     return Rotation2d.fromDegrees(getHeading());
   }
-
+/*Stops the modules */
   public void stopModules(){
     leftFront.stop();
     leftBack.stop();
     rightFront.stop();
     rightBack.stop();
   }
-
+/* Sets the modules to the specified state */
   public void setModuleStates(SwerveModuleState[] moduleStates){
     SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, SwerveConstants.DRIVETRAIN_MAX_SPEED);
     leftFront.setDesiredState(moduleStates[0]);
@@ -228,7 +242,7 @@ public class Drivetrain extends SubsystemBase {
     positions[3] = rightBack.getPosition();
     return positions;
   }
-
+/* Returns true if we are on the red alliance */
   public boolean isRedAlliance(){
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {

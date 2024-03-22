@@ -21,9 +21,6 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
-  }
   
   public static final class SwerveConstants {
     //Drivetrain motor/encoder IDs
@@ -68,34 +65,33 @@ public final class Constants {
     public static final double DRIVETRAIN_MAX_ANGULAR_SPEED = 3.45 * Math.PI; //TODO: Determine max angular speed
 
     //Swerve Kinematics
-    //These also need to be changed
-    public static final double TRACK_WIDTH = Units.inchesToMeters(24.75);
-    public static final double WHEEL_BASE = Units.inchesToMeters(22.75);
-    public static final double DRIVE_BASE_RADIUS = Math.sqrt(Math.pow(TRACK_WIDTH, 2) + Math.pow(WHEEL_BASE, 2)) / 2.0;
+    public static final double TRACK_WIDTH = Units.inchesToMeters(24.75); //TODO: Determine the value
+    public static final double WHEEL_BASE = Units.inchesToMeters(22.75); //TODO: Determine the value
+    public static final double DRIVE_BASE_RADIUS = Math.sqrt(Math.pow(TRACK_WIDTH, 2) + Math.pow(WHEEL_BASE, 2)) / 2.0; //TODO: Determine the value
 
     public static final SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
         new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2),
         new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2),
         new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2),
         new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2)
-    );
+    ); //TODO: Determine the values
 
     //Teleop constraints
-    public static final double TELE_DRIVE_MAX_SPEED = DRIVETRAIN_MAX_SPEED;
-    public static final double TELE_DRIVE_MAX_ANGULAR_SPEED = DRIVETRAIN_MAX_ANGULAR_SPEED / 1.75;
-    public static final double TELE_DRIVE_MAX_ACCELERATION = 3;
-    public static final double TELE_DRIVE_MAX_ANGULAR_ACCELERATION = 3;
+    public static final double TELE_DRIVE_MAX_SPEED = DRIVETRAIN_MAX_SPEED; //TODO: Determine the value
+    public static final double TELE_DRIVE_MAX_ANGULAR_SPEED = DRIVETRAIN_MAX_ANGULAR_SPEED / 1.75; //TODO: Determine the value
+    public static final double TELE_DRIVE_MAX_ACCELERATION = 3; //TODO: Determine the value
+    public static final double TELE_DRIVE_MAX_ANGULAR_ACCELERATION = 3; //TODO: Determine the value
 
     //Auton constrains
-    public static final double AUTO_kP_TRANSLATION = 4;
-    public static final double AUTO_kP_ROTATION = 1.5;
+    public static final double AUTO_kP_TRANSLATION = 4; //TODO: Determine the value
+    public static final double AUTO_kP_ROTATION = 1.5; //TODO: Determine the value
     
         public static final HolonomicPathFollowerConfig AUTO_CONFIG = new HolonomicPathFollowerConfig(
       new PIDConstants(AUTO_kP_TRANSLATION, 0.0, 0.0),
       new PIDConstants(AUTO_kP_ROTATION, 0.0, 0.0),
       DRIVETRAIN_MAX_SPEED, // Max module speed, in m/s
       DRIVE_BASE_RADIUS,
-      new ReplanningConfig());
+      new ReplanningConfig()); //TODO: Determine the value
   }
   public static class IntakeConstants{
     public static final int INTAKE_ID = 16;
