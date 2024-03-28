@@ -10,13 +10,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Drivetrain;
 
-enum driveState{ 
-  NORMAL,
-  ALIGN
-}
 public class SwerveDrive extends Command {
   private Drivetrain drivetrain = Drivetrain.getInstance();
-  driveState state = driveState.NORMAL;
+  // private Shooter shooter = Shooter.getInstance();
+  private XboxController driverController = RobotContainer.driverController;
 
   /** Creates a new SwerveDrive. */
   public SwerveDrive() {
@@ -31,13 +28,38 @@ public class SwerveDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if(drivetrain.getDriveMode() == Drivetrain.DriveMode.Align){
+      // if(shooter.getShooterMode() == ShooterMode.Passing){
+      //   if(drivetrain.isRedAlliance()){
+      //     drivetrain.turnToHeading(45, new Translation2d());
+      //   }
+      //   else{
+      //     drivetrain.turnToHeading(-30, new Translation2d());
+      //   }
+      // }
+      // else{
         drivetrain.swerveDrive(
-        -RobotContainer.driverController.getLeftY(), 
-        -RobotContainer.driverController.getLeftX(), 
-        -RobotContainer.driverController.getRightX(),
-        !RobotContainer.driverController.getRawButton(XboxController.Button.kB.value),
+          -driverController.getLeftY(), 
+          -driverController.getLeftX(), 
+          -drivetrain.getAlignSpeed(),
+          true,
+          new Translation2d(),
+          true);
+      // }
+      
+      // if(drivetrain.readyToShoot() && shooter.readyToShoot()){
+      //   CommandScheduler.getInstance().schedule(drivetrain.rumbleController());
+      // }
+    }
+    else{
+      drivetrain.swerveDrive(
+        -driverController.getLeftY(), 
+        -driverController.getLeftX(), 
+        -driverController.getRightX(),
+        RobotContainer.driverController.getRightTriggerAxis() < 0.9,
         new Translation2d(),
         true);
+    }
   }
 
   // Called once the command ends or is interrupted.

@@ -12,54 +12,31 @@ import frc.lib.drivers.PearadoxSparkMax;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
+  private PearadoxSparkMax utbRoller;
 
-  private PearadoxSparkMax intake;
+  private static final Intake INTAKE = new Intake();
 
-  private final static Intake INTAKE = new Intake();
-  
   public static Intake getInstance(){
     return INTAKE;
   }
-  enum eState{
-    IN,
-    OUT,
-    MOVING
-  }
-  
-  private static eState mode;
+
   /** Creates a new Intake. */
-  public Intake() {  
-    intake = new PearadoxSparkMax(IntakeConstants.INTAKE_ID, MotorType.kBrushless, IdleMode.kCoast, 35, true);
+  public Intake() {
+    utbRoller = new PearadoxSparkMax(IntakeConstants.UTB_ROLLER_ID, MotorType.kBrushless, IdleMode.kCoast, 80, false);
   }
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    switch (mode) {
-      case IN:
-        intake.set(1);
-        break;
-      case OUT:
-        intake.set(-1);
-        break;
-      case MOVING:
-        intake.set(0.3);
-        break;
-      default:
-      intake.set(0);
-        break;
-    }
+  public void periodic() {}
+
+  public void utbIntakeIn(){
+    utbRoller.set(0.6);
   }
 
-  public void setIn(){
-    mode = eState.IN;
+  public void utbIntakeOut(){
+    utbRoller.set(-0.7);
   }
 
-  public void setOut(){
-    mode = eState.OUT;
-  }
-
-  public void setRunning(){
-    mode = eState.MOVING;
+  public void utbIntakeStop(){
+    utbRoller.set(0);
   }
 }

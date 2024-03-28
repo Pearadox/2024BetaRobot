@@ -4,42 +4,37 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Shooter;
 
-public class Reverse extends Command {
-  private static final Drivetrain drivetrain = Drivetrain.getInstance();
+public class ShooterHold extends Command {
+  private Shooter shooter = Shooter.getInstance();
 
-  private static Timer timer = new Timer();
-  /** Creates a new Reverse. */
-  public Reverse() {
+  /** Creates a new ShooterHold. */
+  public ShooterHold() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(drivetrain);
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    timer.restart();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      drivetrain.swerveDrive(-1, 0 , 0, false, new Translation2d(), false);
+    shooter.shooterHold();
+    shooter.pivotHold();
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-     drivetrain.stopModules();
-  }
+  public void end(boolean interrupted) {}
+
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (timer.get()>5);
+    return false;
   }
 }
