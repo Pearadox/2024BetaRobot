@@ -42,7 +42,6 @@ public final class Constants {
     public static final int PIGEON_ID = 15;
     
     //Drivetrain characteristics
-    //All of these need to be changed
     public static final double LEFT_FRONT_OFFSET = 0.307;
     public static final double RIGHT_FRONT_OFFSET = -0.254;
     public static final double LEFT_BACK_OFFSET = 0.026;
@@ -98,5 +97,10 @@ public final class Constants {
   }
   public static class TransportConstants{
     public static final int TRANSPORT_ID= 17;
+  }
+  public static class ClimberConstants{
+    public static final int LEFT_CLIMBER_ID = 26;
+    public static final int RIGHT_CLIMBER_ID = 25;
+    public static final double CLIMBED_POSE = 1; //TODO: Find actual pose
   }
 }

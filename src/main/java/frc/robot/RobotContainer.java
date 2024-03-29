@@ -4,8 +4,10 @@
 
 package frc.robot;
 
+import frc.robot.commands.Climb;
 import frc.robot.commands.Reverse;
 import frc.robot.commands.SwerveDrive;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +25,7 @@ public class RobotContainer {
   public static final XboxController driverController = new XboxController(0);
 
   private static final Drivetrain drivetrain = Drivetrain.getInstance();
+  private static final Climber climber = Climber.getInstance();
 
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -31,6 +34,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     drivetrain.setDefaultCommand(new SwerveDrive());
+    climber.setDefaultCommand(new Climb());
     configureBindings();
   }
 
