@@ -63,7 +63,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public enum ShooterMode{
-    Auto, Manual, SourcePassing, StagePassing, Speaker
+    Auto, Manual, SourcePassing, StagePassing, Speaker, Trap
   }
 
   private ShooterMode shooterMode = ShooterMode.Auto;
@@ -380,6 +380,10 @@ public class Shooter extends SubsystemBase {
 
   public void setSpeakerMode(){
     shooterMode = ShooterMode.Speaker;
+  }
+
+  public void setTrapMode(){
+    shooterMode = ShooterMode.Trap;
   }
 
   public boolean isRedAlliance(){

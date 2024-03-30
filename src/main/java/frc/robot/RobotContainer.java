@@ -24,12 +24,15 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.drivers.vision.PoseEstimation;
 import frc.robot.Constants.IOConstants;
+import frc.robot.commands.ClimbSequence;
+import frc.robot.commands.ClimberHold;
 import frc.robot.commands.IntakeHold;
 import frc.robot.commands.Outtake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShooterHold;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.AmpBar;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -48,6 +51,7 @@ public class RobotContainer {
   public static final Transport transport = Transport.getInstance();
   public static final Shooter shooter = Shooter.getInstance();
   public static final AmpBar ampBar = AmpBar.getInstance();
+  public static final Climber climber = Climber.getInstance();
 
   //Driver Controls
   public static final CommandXboxController commandDriverController = new CommandXboxController(IOConstants.DRIVER_CONTROLLER_PORT);
@@ -68,6 +72,9 @@ public class RobotContainer {
   private final JoystickButton shooterManualMode_B = new JoystickButton(opController, XboxController.Button.kB.value);
   private final JoystickButton shooterSpeakerMode_X = new JoystickButton(opController, XboxController.Button.kX.value);
   private final JoystickButton shooterStagePassingMode_Start = new JoystickButton(opController, XboxController.Button.kStart.value);
+  private final JoystickButton startClimbingSequence = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
+  private final JoystickButton forwardClimbingSequence = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
+
 
   //Pose Estimation
   public static final PoseEstimation poseEstimation = new PoseEstimation();
@@ -118,6 +125,11 @@ public class RobotContainer {
     shooterSourcePassingMode_Y.onTrue(new InstantCommand(() -> shooter.setSourcePassingMode()));
     shooterStagePassingMode_Start.onTrue(new InstantCommand(() -> shooter.setStagePassingMode()));
     shooterSpeakerMode_X.onTrue(new InstantCommand(() -> shooter.setSpeakerMode()));
+    startClimbingSequence.onTrue(new InstantCommand(() -> climber.setZeroing(true)))
+      .onFalse(new InstantCommand(() -> climber.setZeroing(false))
+      .andThen(new InstantCommand(() -> climber.setClimbingMode()))
+      .andThen(new InstantCommand(() -> ampBar.setDeployedMode())));
+    forwardClimbingSequence.onTrue(new ClimbSequence());
   }
 
   /**
@@ -160,6 +172,7 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new SwerveDrive());
     intake.setDefaultCommand(new IntakeHold());
     shooter.setDefaultCommand(new ShooterHold());
+    climber.setDefaultCommand(new ClimberHold());
   }
 
   private void configureAutoTab() {

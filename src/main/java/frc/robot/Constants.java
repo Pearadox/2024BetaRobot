@@ -167,6 +167,7 @@ public final class Constants {
 
     public static final double STOWED_ROT = -20.2; 
     public static final double DEPLOYED_ROT = -0.9;
+    public static final double TRAP_ROT = 16.5; //TODO
   }
 
   public static final class FieldConstants{
@@ -184,5 +185,13 @@ public final class Constants {
     
     public static final double AMBIGUITY_FILTER = 0.3;
     public static final double DISTANCE_FILTER = FieldConstants.FIELD_LENGTH / 2;
+  }
+
+  public static final class ClimberConstants{
+    public static final int LEFT_CLIMBER_ID = 26;
+    public static final int RIGHT_CLIMBER_ID = 25;
+
+    public static final double CLIMBING_ROT = 0;
+    public static final double CLIMB_ROT = 0;
   }
 }

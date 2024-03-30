@@ -25,7 +25,7 @@ public class AmpBar extends SubsystemBase {
   private double ampBarAdjust = 0;
 
   public enum AmpBarMode{
-    Stowed, Deployed
+    Stowed, Deployed, Trap
   }
 
   public AmpBarMode ampBarMode = AmpBarMode.Stowed;
@@ -51,6 +51,12 @@ public class AmpBar extends SubsystemBase {
     if(ampBarMode == AmpBarMode.Deployed){
       ampBarController.setReference(
         AmpBarConstants.DEPLOYED_ROT + ampBarAdjust,
+        ControlType.kPosition,
+        0);
+    }
+    else if(ampBarMode == AmpBarMode.Trap){
+      ampBarController.setReference(
+        AmpBarConstants.TRAP_ROT + ampBarAdjust,
         ControlType.kPosition,
         0);
     }
@@ -84,5 +90,13 @@ public class AmpBar extends SubsystemBase {
 
   public void setDeployedMode(){
     ampBarMode = AmpBarMode.Deployed;
+  }
+
+  public void setTrapMode(){
+    ampBarMode = AmpBarMode.Trap;
+  }
+
+  public AmpBarMode getAmpBarMode(){
+    return ampBarMode;
   }
 }
