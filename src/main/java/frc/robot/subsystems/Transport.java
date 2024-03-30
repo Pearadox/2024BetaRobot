@@ -38,10 +38,10 @@ public class Transport extends SubsystemBase {
 
   /** Creates a new Transport. */
   public Transport() {
-    transportMotor = new PearadoxSparkMax(TransportConstants.TRANSPORT_ID, MotorType.kBrushless, IdleMode.kBrake, 40, false);
+    transportMotor = new PearadoxSparkMax(TransportConstants.TRANSPORT_ID, MotorType.kBrushless, IdleMode.kBrake, 60, false);
 
     irSensor = new DigitalInput(TransportConstants.IR_SENSOR_CHANNEL);
-    debouncer = new Debouncer(0.1, DebounceType.kFalling);
+    debouncer = new Debouncer(0.2, DebounceType.kFalling);
   }
 
   @Override
@@ -49,7 +49,10 @@ public class Transport extends SubsystemBase {
     // This method will be called once per scheduler run
     SmarterDashboard.putBoolean("Ir Sensor", hasNote(), "Transport");
 
-    if(isHolding){
+    if(RobotContainer.climber.getClimbSequenceStep() >= 3){
+      transportShoot();
+    }
+    else if(isHolding){
       if(hasNote()){
         transportStop();
       }
@@ -68,7 +71,7 @@ public class Transport extends SubsystemBase {
   }
 
   public void transportHold(){
-    transportMotor.set(0.5);
+    transportMotor.set(0.3);
   }
 
   public void transportOut(){

@@ -25,7 +25,7 @@ public class AmpBar extends SubsystemBase {
   private double ampBarAdjust = 0;
 
   public enum AmpBarMode{
-    Stowed, Deployed
+    Stowed, Deployed, Trap, Climb
   }
 
   public AmpBarMode ampBarMode = AmpBarMode.Stowed;
@@ -48,9 +48,53 @@ public class AmpBar extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if(RobotContainer.opController.getPOV() == 90){
+      ampBarAdjust += 0.06;
+    }
+    else if(RobotContainer.opController.getPOV() == 270){
+      ampBarAdjust -= 0.06;
+    }
+
+    SmarterDashboard.putNumber("Amp Bar Position", ampBarEncoder.getPosition(), "Amp Bar");
+    SmarterDashboard.putNumber("Amp Bar Adjust", ampBarAdjust, "Amp Bar");
+  }
+
+  public void setStowedMode(){
+    ampBarMode = AmpBarMode.Stowed;
+  }
+
+  public void setDeployedMode(){
+    ampBarMode = AmpBarMode.Deployed;
+  }
+
+  public void setTrapMode(){
+    ampBarMode = AmpBarMode.Trap;
+  }
+
+  public void setClimbMode(){
+    ampBarMode = AmpBarMode.Climb;
+  }
+
+  public AmpBarMode getAmpBarMode(){
+    return ampBarMode;
+  }
+
+  public void ampBarHold(){
     if(ampBarMode == AmpBarMode.Deployed){
       ampBarController.setReference(
         AmpBarConstants.DEPLOYED_ROT + ampBarAdjust,
+        ControlType.kPosition,
+        0);
+    }
+    else if(ampBarMode == AmpBarMode.Climb){
+      ampBarController.setReference(
+        AmpBarConstants.CLIMB_ROT + ampBarAdjust,
+        ControlType.kPosition,
+        0);
+    }
+    else if(ampBarMode == AmpBarMode.Trap){
+      ampBarController.setReference(
+        AmpBarConstants.TRAP_ROT + ampBarAdjust,
         ControlType.kPosition,
         0);
     }
@@ -60,29 +104,5 @@ public class AmpBar extends SubsystemBase {
         ControlType.kPosition,
         0);
     }
-
-    if(RobotContainer.opController.getPOV() == 90){
-      ampBarAdjust += 0.06;
-    }
-    else if(RobotContainer.opController.getPOV() == 270){
-      ampBarAdjust -= 0.06;
-    }
-
-    if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95 && ampBarMode == AmpBarMode.Stowed){
-      setDeployedMode();
-    }
-    else if (RobotContainer.driverController.getLeftTriggerAxis() < 0.95 && ampBarMode == AmpBarMode.Deployed){
-      setStowedMode();
-    }
-
-    SmarterDashboard.putNumber("Amp Bar Position", ampBarEncoder.getPosition(), "Amp Bar");
-  }
-
-  public void setStowedMode(){
-    ampBarMode = AmpBarMode.Stowed;
-  }
-
-  public void setDeployedMode(){
-    ampBarMode = AmpBarMode.Deployed;
   }
 }

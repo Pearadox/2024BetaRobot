@@ -104,7 +104,7 @@ public final class Constants {
     public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.1, 0.1, 0.1);
 
     public static final double kS_PERCENT = 0.035;
-    public static final double kP_PERCENT = 0.008;
+    public static final double kP_PERCENT = 0.004;
   }
 
   public static final class IntakeConstants{
@@ -131,28 +131,44 @@ public final class Constants {
     public static final double PIVOT_kI = 0.00008;
     public static final double PIVOT_kD = 0;
 
-
     public static final double PIVOT_MIN_OUTPUT = -0.85;
     public static final double PIVOT_MAX_OUTPUT = 0.85;
 
-    public static final double AMP_PIVOT_POSITION = 23; //TODO: Pivot positions for amp passing speaker
+    public static final double AMP_PIVOT_POSITION = 26; //TODO: Pivot positions for amp passing speaker
     public static final double PASSING_PIVOT_POSITION = 24.5;
     public static final double SPEAKER_PIVOT_POSITION = 29.7;
-
+    public static final double TRAP_PIVOT_POSITION = 58;
     public static final double FLOOR_TO_SHOOTER = Units.inchesToMeters(7); //TODO: floor to shooter length
 
     public static final double STAGE_PASSING_VOLTAGE = 5.3;
     public static final double SOURCE_PASSING_VOLTAGE = 5.7;
-    public static final double AMP_VOLTAGE = 3.9;
-    public static final double SPEAKER_VOLTAGE = 7.5;
+    public static final double AMP_VOLTAGE = 3;
+    public static final double SPEAKER_VOLTAGE = 5.5;
+    public static final double TRAP_VOLTAGE = 5;
 
-    public static final double LEFT_TO_RIGHT_VOLTAGE_OFFSET = 2.0;
+    public static final double LEFT_TO_RIGHT_VOLTAGE_OFFSET = 3.0;
   }
 
   public static final class TransportConstants{
     public static final int TRANSPORT_ID = 22;
 
     public static final int IR_SENSOR_CHANNEL = 0;
+  }
+
+  public static final class ClimberConstants{
+    public static final int LEFT_CLIMBER_ID = 23;
+    public static final int RIGHT_CLIMBER_ID = 24;
+
+    public static final double MANTIS_ROT = 0;
+    public static final double IDLE_ROT = 10;
+    public static final double CLIMB_ROT = 127.5;
+
+    public static final double CLIMBER_kP = 0.15;
+    public static final double CLIMBER_kI = 0;
+    public static final double CLIMBER_kD = 0;
+
+    public static final double CLIMBER_MIN_OUTPUT = -1;
+    public static final double CLIMBER_MAX_OUTPUT = 1;
   }
 
   public static final class AmpBarConstants{
@@ -167,6 +183,8 @@ public final class Constants {
 
     public static final double STOWED_ROT = -20.2; 
     public static final double DEPLOYED_ROT = -0.9;
+    public static final double TRAP_ROT = -4;
+    public static final double CLIMB_ROT = -3;
   }
 
   public static final class FieldConstants{

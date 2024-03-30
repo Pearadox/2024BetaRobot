@@ -76,11 +76,11 @@ public class Shooter extends SubsystemBase {
 
   /** Creates a new Shooter. */
   public Shooter() {
-    leftShooter = new PearadoxSparkFlex(ShooterConstants.LEFT_SHOOTER_ID, MotorType.kBrushless, IdleMode.kBrake, 50, false,
+    leftShooter = new PearadoxSparkFlex(ShooterConstants.LEFT_SHOOTER_ID, MotorType.kBrushless, IdleMode.kBrake, 80, false,
       ShooterConstants.LEFT_SHOOTER_kP, ShooterConstants.LEFT_SHOOTER_kI, ShooterConstants.LEFT_SHOOTER_kD,
       ShooterConstants.SHOOTER_MIN_OUTPUT, ShooterConstants.SHOOTER_MAX_OUTPUT);
 
-    rightShooter = new PearadoxSparkFlex(ShooterConstants.RIGHT_SHOOTER_ID, MotorType.kBrushless, IdleMode.kBrake, 50, true,
+    rightShooter = new PearadoxSparkFlex(ShooterConstants.RIGHT_SHOOTER_ID, MotorType.kBrushless, IdleMode.kBrake, 80, true,
       ShooterConstants.RIGHT_SHOOTER_kP, ShooterConstants.RIGHT_SHOOTER_kI, ShooterConstants.RIGHT_SHOOTER_kD,
       ShooterConstants.SHOOTER_MIN_OUTPUT, ShooterConstants.SHOOTER_MAX_OUTPUT);
 
@@ -97,28 +97,44 @@ public class Shooter extends SubsystemBase {
     pivotController = pivot.getPIDController();
 
     //done
-    pivotLerp.addPoint(54, 31.4);
-    pivotLerp.addPoint(48, 28.47);
-    pivotLerp.addPoint(43, 25.09);
-    pivotLerp.addPoint(39, 23.4);
-    pivotLerp.addPoint(36, 21.9); // blue red
-    pivotLerp.addPoint(33, 20.0); // 15.2 15.6
-    pivotLerp.addPoint(31, 18.3);  
-    pivotLerp.addPoint(29, 17.2); //12.1 12.7
-    pivotLerp.addPoint(26, 15.26); //11.1 11.5
+    pivotLerp.addPoint(52, 32.3);
+    pivotLerp.addPoint(46.7, 29.57);
+    pivotLerp.addPoint(41.8, 27.2);
+    pivotLerp.addPoint(38.7, 25.6);
+    pivotLerp.addPoint(35.2, 23.26);
+    pivotLerp.addPoint(32.4, 19.93);
+    pivotLerp.addPoint(29.6, 18.93);
+    pivotLerp.addPoint(27.7, 17.76);
+    pivotLerp.addPoint(25.5, 16.75);
+    pivotLerp.addPoint(24, 15.3);
+    pivotLerp.addPoint(22.4, 14.27);
+    pivotLerp.addPoint(21.4, 13.07);
+    pivotLerp.addPoint(20.3, 12.2);
+    pivotLerp.addPoint(19.1, 11.27);
+    pivotLerp.addPoint(18.3, 10.7);
+    pivotLerp.addPoint(17.25, 10.2);
+    pivotLerp.addPoint(16.4, 9.6);
+    pivotLerp.addPoint(15.85, 8.6);
+    pivotLerp.addPoint(15.2, 8.1);
+    pivotLerp.addPoint(14.5, 7.95);
+    pivotLerp.addPoint(14, 7.7);
+    pivotLerp.addPoint(13.5, 7.5);
+    pivotLerp.addPoint(13, 7.25);
+    pivotLerp.addPoint(12.6, 6.9);
+    pivotLerp.addPoint(12, 6.8);
+    pivotLerp.addPoint(11.5, 6.5);
 
-    //not done
-    pivotLerp.addPoint(21, 10.2); //10 10.2
-    pivotLerp.addPoint(18, 7.3); //7.3 7.3
-    pivotLerp.addPoint(15, 4.6); //4.6 4.6
-
-    shooterLerp.addPoint(53, 5.5);
-    shooterLerp.addPoint(47, 5.5);
-    shooterLerp.addPoint(41, 5.75);
-    shooterLerp.addPoint(35, 6);
-    shooterLerp.addPoint(29, 6.25);
-    shooterLerp.addPoint(23, 6.5);
-    shooterLerp.addPoint(15, 7);
+    shooterLerp.addPoint(53, 6);
+    shooterLerp.addPoint(47, 6);
+    shooterLerp.addPoint(41, 6);
+    shooterLerp.addPoint(35, 6.5);
+    shooterLerp.addPoint(29, 6.75);
+    shooterLerp.addPoint(23, 7);
+    shooterLerp.addPoint(18, 7.5);
+    shooterLerp.addPoint(17, 8.5);
+    shooterLerp.addPoint(15, 8.5);
+    shooterLerp.addPoint(13, 9);
+    shooterLerp.addPoint(11.5, 9.5);
 
     driverTab = Shuffleboard.getTab("Driver");
     leftShooterSpeedEntry = driverTab.add("Left Shooter Speed", 7)
@@ -157,6 +173,17 @@ public class Shooter extends SubsystemBase {
       leftShooter.set(0.7);
       rightShooter.set(0.6);
     }
+    else if(RobotContainer.climber.getClimbSequenceStep() >= 0){
+      leftController.setReference(
+        ShooterConstants.TRAP_VOLTAGE,
+        ControlType.kVoltage,
+        0);
+
+      rightController.setReference(
+        ShooterConstants.TRAP_VOLTAGE,
+        ControlType.kVoltage,
+        0);
+    }
     else if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){ //Amp
       leftController.setReference(
         ShooterConstants.AMP_VOLTAGE,
@@ -164,7 +191,7 @@ public class Shooter extends SubsystemBase {
         0);
 
       rightController.setReference(
-        ShooterConstants.AMP_VOLTAGE - 0.1,
+        ShooterConstants.AMP_VOLTAGE,
         ControlType.kVoltage,
         0);
     }
@@ -186,7 +213,7 @@ public class Shooter extends SubsystemBase {
         0);
 
       rightController.setReference(
-        ShooterConstants.STAGE_PASSING_VOLTAGE-ShooterConstants.LEFT_TO_RIGHT_VOLTAGE_OFFSET,
+        ShooterConstants.STAGE_PASSING_VOLTAGE - ShooterConstants.LEFT_TO_RIGHT_VOLTAGE_OFFSET,
         ControlType.kVoltage,
         0);
     }
@@ -197,7 +224,7 @@ public class Shooter extends SubsystemBase {
         0);
 
       rightController.setReference(
-        ShooterConstants.SPEAKER_VOLTAGE-ShooterConstants.LEFT_TO_RIGHT_VOLTAGE_OFFSET,
+        ShooterConstants.SPEAKER_VOLTAGE - ShooterConstants.LEFT_TO_RIGHT_VOLTAGE_OFFSET,
         ControlType.kVoltage,
         0);
     }
@@ -208,7 +235,7 @@ public class Shooter extends SubsystemBase {
         0);
 
       rightController.setReference(
-        rightShooterSpeedEntry.getDouble(5),
+        rightShooterSpeedEntry.getDouble(4),
         ControlType.kVoltage,
         0);
     }
@@ -219,7 +246,7 @@ public class Shooter extends SubsystemBase {
         0);
 
       rightController.setReference(
-        shooterVoltage - 2,
+        shooterVoltage - ShooterConstants.LEFT_TO_RIGHT_VOLTAGE_OFFSET,
         ControlType.kVoltage,
         0);
     }
@@ -233,7 +260,23 @@ public class Shooter extends SubsystemBase {
 
   public void pivotHold(){
     if(zeroing){
-      pivot.set(-0.15);
+      pivot.set(-0.05);
+    }
+    else if(RobotContainer.climber.getClimbSequenceStep() >= 0 && RobotContainer.climber.getClimbSequenceStep() <= 1){
+      pivotController.setReference(
+        ShooterConstants.TRAP_PIVOT_POSITION - 15,
+        ControlType.kPosition,
+        0);
+
+      pivotPosition = ShooterConstants.TRAP_PIVOT_POSITION - 15;
+    }
+    else if(RobotContainer.climber.getClimbSequenceStep() >= 2){
+      pivotController.setReference(
+        ShooterConstants.TRAP_PIVOT_POSITION,
+        ControlType.kPosition,
+        0);
+
+      pivotPosition = ShooterConstants.TRAP_PIVOT_POSITION;
     }
     else if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){
       pivotController.setReference(
@@ -314,9 +357,6 @@ public class Shooter extends SubsystemBase {
 
     double x = Math.abs(botpose_targetspace[0]);
     double z = Math.abs(botpose_targetspace[2]);
-    if(!isRedAlliance()){ //edit for houston comp
-      z += 0.02;  
-    }
 
     double hypot = Math.hypot(x, z);
 
