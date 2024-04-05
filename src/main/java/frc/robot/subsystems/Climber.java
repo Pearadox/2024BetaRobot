@@ -38,10 +38,10 @@ public class Climber extends SubsystemBase {
   }
 
   public Climber() {
-    leftClimber = new PearadoxSparkMax(ClimberConstants.LEFT_CLIMBER_ID, MotorType.kBrushless, IdleMode.kBrake, 60, true,
+    leftClimber = new PearadoxSparkMax(ClimberConstants.LEFT_CLIMBER_ID, MotorType.kBrushless, IdleMode.kBrake, 90, true,
       ClimberConstants.CLIMBER_kP, ClimberConstants.CLIMBER_kI, ClimberConstants.CLIMBER_kD, 
       ClimberConstants.CLIMBER_MIN_OUTPUT, ClimberConstants.CLIMBER_MAX_OUTPUT);//TODO: Check for inversion
-    rightClimber = new PearadoxSparkMax(ClimberConstants.RIGHT_CLIMBER_ID, MotorType.kBrushless, IdleMode.kBrake, 60, false,
+    rightClimber = new PearadoxSparkMax(ClimberConstants.RIGHT_CLIMBER_ID, MotorType.kBrushless, IdleMode.kBrake, 90, false,
       ClimberConstants.CLIMBER_kP, ClimberConstants.CLIMBER_kI, ClimberConstants.CLIMBER_kD, 
       ClimberConstants.CLIMBER_MIN_OUTPUT, ClimberConstants.CLIMBER_MAX_OUTPUT);//TODO: Check for inversion
 
@@ -61,10 +61,11 @@ public class Climber extends SubsystemBase {
     SmarterDashboard.putNumber("Climber Adjust", climberAdjust, "Climber");
 
     if(RobotContainer.opController.getLeftTriggerAxis() > 0.95){
-      climberAdjust -= 0.01;
+      climberAdjust -= 0.05;
     }
     else if(RobotContainer.opController.getRightTriggerAxis() > 0.95){
-      climberAdjust += 0.01;
+      climberAdjust += 0.05;
+      
     }
   }
 
@@ -73,18 +74,13 @@ public class Climber extends SubsystemBase {
     rightClimberController.setReference(reference + climberAdjust, ControlType.kPosition, 0);
   }
 
-  public void setPower(double power){
-    leftClimber.set(power);
-    rightClimber.set(power);
-  }
-
   public void setZeroing(boolean zeroing){
     this.zeroing = zeroing;
   }
 
   public void zeroClimber(){
-    leftClimber.set(-0.35);
-    rightClimber.set(-0.35);
+    leftClimber.set(-0.5);
+    rightClimber.set(-0.5);
   }
 
   public void resetEncoders(){

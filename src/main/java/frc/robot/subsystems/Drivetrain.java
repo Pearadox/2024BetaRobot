@@ -345,9 +345,9 @@ public class Drivetrain extends SubsystemBase {
 
     if(isRedAlliance()){
       if(llTable.getEntry("tid").getDouble(0) == 4){
-        double error = llTable.getEntry("tx").getDouble(0) - 2;
+        double error = llTable.getEntry("tx").getDouble(0);
         
-        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(llTable.getEntry("tx").getDouble(0) - 2, 0) : 0;
+        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(llTable.getEntry("tx").getDouble(0), 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
       }
       else{
         double alignAngle = getAlignAngle(4);
@@ -371,12 +371,45 @@ public class Drivetrain extends SubsystemBase {
     }
     else{
       if(llTable.getEntry("tid").getDouble(0) == 7){
-        double error = llTable.getEntry("tx").getDouble(0) - 2;
+        double error = llTable.getEntry("tx").getDouble(0);
         
-        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(llTable.getEntry("tx").getDouble(0) - 2, 0) : 0;
+        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(llTable.getEntry("tx").getDouble(0), 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
       }
       else{
         double alignAngle = getAlignAngle(7);
+
+        double error = alignAngle - getHeading();
+
+        if(error > 180) {
+          error -= 360;
+        }
+        else if(error < -180){
+          error += 360;
+          }
+        
+        if(Math.abs(error) > 1){
+          alignSpeed = Math.signum(-error) * SwerveConstants.kS_PERCENT + SwerveConstants.kP_PERCENT * -error;
+        }
+        else{
+          alignSpeed = 0;
+        }
+      }
+    }
+
+    return alignSpeed;
+  }
+
+  public double getSourceAlignSpeed(){
+    double alignSpeed;
+
+    if(isRedAlliance()){
+      if(llTable.getEntry("tid").getDouble(0) == 4){
+        double error = llTable.getEntry("tx").getDouble(0) + 3;
+        
+        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(llTable.getEntry("tx").getDouble(0) + 3, 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
+      }
+      else{
+        double alignAngle = getAlignAngle(4);
 
         double error = alignAngle - getHeading();
 
@@ -395,8 +428,54 @@ public class Drivetrain extends SubsystemBase {
         }
       }
     }
+    else{
+      if(llTable.getEntry("tid").getDouble(0) == 7){
+        double error = llTable.getEntry("tx").getDouble(0) - 3;
+        
+        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(llTable.getEntry("tx").getDouble(0) - 3, 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
+      }
+      else{
+        double alignAngle = getAlignAngle(7);
+
+        double error = alignAngle - getHeading();
+
+        if(error > 180) {
+          error -= 360;
+        }
+        else if(error < -180){
+          error += 360;
+          }
+        
+        if(Math.abs(error) > 1){
+          alignSpeed = Math.signum(-error) * SwerveConstants.kS_PERCENT + SwerveConstants.kP_PERCENT * -error;
+        }
+        else{
+          alignSpeed = 0;
+        }
+      }
+    }
 
     return alignSpeed;
+  }
+
+  public double getPassingAlignSpeed(){
+    double alignAngle = isRedAlliance() ? getPassingAngle() - 8 : getPassingAngle() - 13;
+
+    double error = alignAngle - getHeading();
+
+    if(error > 180) {
+      error -= 360;
+    }
+    else if(error < -180){
+      error += 360;
+    }
+    
+    if(Math.abs(error) > 1){
+      return (Math.signum(-error) * SwerveConstants.kS_PERCENT + SwerveConstants.kP_PERCENT * -error);
+    }
+    else{
+      return 0;
+    }
   }
 
   public boolean readyToShoot(){
@@ -427,6 +506,35 @@ public class Drivetrain extends SubsystemBase {
     }
 
     return alignAngle;
+  }
+
+  public double getPassingAngle(){
+    Pose2d targetPose = isRedAlliance() ? new Pose2d(new Translation2d(15.48, 7.08), new Rotation2d()) : new Pose2d(new Translation2d(0.93, 7.08), new Rotation2d());
+    Pose2d robotPose = getPose();
+
+    double deltaX = targetPose.getX() - robotPose.getX();
+    double deltaY = targetPose.getY() - robotPose.getY();
+
+    double alignAngle = Math.toDegrees(Math.atan2(deltaY, deltaX));
+
+    if(!isRedAlliance()){
+      alignAngle += 180;
+      if(alignAngle > 180){
+        alignAngle -= 360;
+      }
+    }
+
+    return alignAngle;
+  }
+
+  public double getPassingDistance(){
+    Pose2d targetPose = isRedAlliance() ? new Pose2d(new Translation2d(15.48, 7.08), new Rotation2d()) : new Pose2d(new Translation2d(0.93, 7.08), new Rotation2d());
+    Pose2d robotPose = getPose();
+
+    double deltaX = targetPose.getX() - robotPose.getX();
+    double deltaY = targetPose.getY() - robotPose.getY();
+
+    return Math.hypot(Math.abs(deltaX), Math.abs(deltaY)) > 8 ? Math.hypot(Math.abs(deltaX), Math.abs(deltaY)) : 8;
   }
 
   public DriveMode getDriveMode(){

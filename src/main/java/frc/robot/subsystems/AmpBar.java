@@ -57,6 +57,7 @@ public class AmpBar extends SubsystemBase {
 
     SmarterDashboard.putNumber("Amp Bar Position", ampBarEncoder.getPosition(), "Amp Bar");
     SmarterDashboard.putNumber("Amp Bar Adjust", ampBarAdjust, "Amp Bar");
+    SmarterDashboard.putNumber("Amp Bar Current", ampBar.getOutputCurrent(), "Amp Bar");
   }
 
   public void setStowedMode(){
@@ -100,7 +101,7 @@ public class AmpBar extends SubsystemBase {
     }
     else{
       ampBarController.setReference(
-        AmpBarConstants.STOWED_ROT + ampBarAdjust,
+        AmpBarConstants.STOWED_ROT,
         ControlType.kPosition,
         0);
     }

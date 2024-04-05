@@ -48,11 +48,12 @@ public class Transport extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmarterDashboard.putBoolean("Ir Sensor", hasNote(), "Transport");
+    SmarterDashboard.putNumber("Transport Current", transportMotor.getOutputCurrent(), "Transport");
 
-    if(RobotContainer.climber.getClimbSequenceStep() >= 3){
-      transportShoot();
-    }
-    else if(isHolding){
+    // if(RobotContainer.climber.getClimbSequenceStep() >= 3){
+    //   transportShoot();
+    // }
+    if(isHolding){
       if(hasNote()){
         transportStop();
       }

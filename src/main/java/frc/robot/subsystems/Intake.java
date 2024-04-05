@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.drivers.PearadoxSparkMax;
+import frc.lib.util.SmarterDashboard;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
@@ -26,7 +27,9 @@ public class Intake extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    SmarterDashboard.putNumber("Intake Current", utbRoller.getOutputCurrent(), "Intake");
+  }
 
   public void utbIntakeIn(){
     utbRoller.set(0.6);

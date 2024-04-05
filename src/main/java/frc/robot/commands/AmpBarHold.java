@@ -36,12 +36,15 @@ public class AmpBarHold extends Command {
         ampBar.setStowedMode();
       }
     }
-    else if(climber.getClimbSequenceStep() >= 0 && climber.getClimbSequenceStep() <= 1){
-      ampBar.setClimbMode();
-    }
-    else if(climber.getClimbSequenceStep() >= 2){
-      ampBar.setTrapMode();
-    }
+    // else if(climber.getClimbSequenceStep() >= 0 && climber.getClimbSequenceStep() <= 1){
+    //   ampBar.setClimbMode();
+    // }
+    // else if(climber.getClimbSequenceStep() >= 2){
+    //   ampBar.setTrapMode();
+    // }
+    // else if(climber.getClimbSequenceStep() > 3){
+    //   ampBar.setClimbMode(); //needs to be all the way 0
+    // }
   }
 
   // Called once the command ends or is interrupted.
