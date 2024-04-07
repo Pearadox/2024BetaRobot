@@ -51,9 +51,11 @@ public class SwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmarterDashboard.putNumber("Drive Distance (rot) - Motor: " + driveMotor.getDeviceID(), getDriveMotorPosition(), "Drivetrain");
-    SmarterDashboard.putNumber("Wheel Position (rot) - Motor: " + driveMotor.getDeviceID(), getTurnMotorPosition(), "Drivetrain");
-    SmarterDashboard.putNumber("Absolute Wheel Angle (deg) - Motor: " + driveMotor.getDeviceID(), absoluteEncoder.getAbsolutePosition().getValueAsDouble(), "Drivetrain");
+    SmarterDashboard.putNumber("Drive Distance (rot) - Motor: " + driveMotor.getDeviceID(), getDriveMotorPosition(), "SwerveModule");
+    SmarterDashboard.putNumber("Wheel Position (rot) - Motor: " + driveMotor.getDeviceID(), getTurnMotorPosition(), "SwerveModule");
+    SmarterDashboard.putNumber("Drive Motor " + driveMotor.getDeviceID() + " Current", driveMotor.getStatorCurrent().getValueAsDouble(), "SwerveModule");
+    SmarterDashboard.putNumber("Turn Motor " + driveMotor.getDeviceID() + " Current", turnMotor.getStatorCurrent().getValueAsDouble(), "SwerveModule");
+    SmarterDashboard.putNumber("Absolute Wheel Angle (deg) - Motor: " + driveMotor.getDeviceID(), absoluteEncoder.getAbsolutePosition().getValueAsDouble(), "SwerveModule");
   }
 
   public void setBrake(boolean brake){

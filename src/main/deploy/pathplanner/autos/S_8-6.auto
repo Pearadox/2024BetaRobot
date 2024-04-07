@@ -18,15 +18,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "S_8.5"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Source Auto Align"
+            "waitTime": 0.75
           }
         },
         {
@@ -39,6 +33,12 @@
           "type": "path",
           "data": {
             "pathName": "S_8"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Modules"
           }
         },
         {
@@ -66,15 +66,15 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Stop Modules"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "S_7"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Modules"
           }
         },
         {

@@ -5,10 +5,11 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterKraken;
 
 public class ShooterHold extends Command {
-  private Shooter shooter = Shooter.getInstance();
+  private ShooterKraken shooter = ShooterKraken.getInstance();
+
 
   /** Creates a new ShooterHold. */
   public ShooterHold() {

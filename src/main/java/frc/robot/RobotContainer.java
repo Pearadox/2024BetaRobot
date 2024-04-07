@@ -26,7 +26,6 @@ import frc.lib.drivers.vision.PoseEstimation;
 import frc.robot.Constants.IOConstants;
 import frc.robot.commands.AmpBarHold;
 import frc.robot.commands.AutoAlign;
-import frc.robot.commands.ClimberHold;
 import frc.robot.commands.IntakeHold;
 import frc.robot.commands.Outtake;
 import frc.robot.commands.Shoot;
@@ -34,10 +33,9 @@ import frc.robot.commands.ShooterHold;
 import frc.robot.commands.SourceAutoAlign;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.AmpBar;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterKraken;
 import frc.robot.subsystems.Transport;
 
 /**
@@ -51,9 +49,11 @@ public class RobotContainer {
   public static final Drivetrain drivetrain = Drivetrain.getInstance();
   public static final Intake intake = Intake.getInstance();
   public static final Transport transport = Transport.getInstance();
-  public static final Climber climber = Climber.getInstance();
-  public static final Shooter shooter = Shooter.getInstance();
+  // public static final Climber climber = Climber.getInstance();
+//  public static final Shooter shooter = Shooter.getInstance();
   public static final AmpBar ampBar = AmpBar.getInstance();
+  public static final ShooterKraken shooter = ShooterKraken.getInstance();
+
 
   //Driver Controls
   public static final CommandXboxController commandDriverController = new CommandXboxController(IOConstants.DRIVER_CONTROLLER_PORT);
@@ -73,8 +73,8 @@ public class RobotContainer {
   private final JoystickButton shooterPassingMode_Y = new JoystickButton(opController, XboxController.Button.kY.value);
   private final JoystickButton shooterManualMode_B = new JoystickButton(opController, XboxController.Button.kB.value);
   private final JoystickButton shooterSpeakerMode_X = new JoystickButton(opController, XboxController.Button.kX.value);
-  private final JoystickButton resetClimbSequence_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
-  private final JoystickButton nextClimbSequenceStep_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
+  // private final JoystickButton resetClimbSequence_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
+  // private final JoystickButton nextClimbSequenceStep_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
 
   //Pose Estimation
   public static final PoseEstimation poseEstimation = new PoseEstimation();
@@ -124,11 +124,11 @@ public class RobotContainer {
     shooterManualMode_B.onTrue(new InstantCommand(() -> shooter.setManualMode()));
     shooterPassingMode_Y.onTrue(new InstantCommand(() -> shooter.setPassingMode()));
     shooterSpeakerMode_X.onTrue(new InstantCommand(() -> shooter.setSpeakerMode()));
-    resetClimbSequence_LB.whileTrue(new InstantCommand(() -> climber.setZeroing(true)))
-      .onFalse(new InstantCommand(() -> climber.resetEncoders())
-      .andThen(new InstantCommand(() -> climber.setZeroing(false)))
-      .andThen(new InstantCommand(() -> climber.resetClimbSequence())));
-    nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
+    // resetClimbSequence_LB.whileTrue(new InstantCommand(() -> climber.setZeroing(true)))
+    //   .onFalse(new InstantCommand(() -> climber.resetEncoders())
+    //   .andThen(new InstantCommand(() -> climber.setZeroing(false)))
+    //   .andThen(new InstantCommand(() -> climber.resetClimbSequence())));
+    // nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
   }
 
   /**
@@ -138,12 +138,13 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     drivetrain.resetAllEncoders();
-    if(drivetrain.isRedAlliance()){
-      drivetrain.setHeading(-60);
-    }
-    else{
-      drivetrain.setHeading(60);
-    }
+    // if(!drivetrain.isRedAlliance()){
+    //   drivetrain.setHeading(-60);
+    // }
+    // else{
+    //   drivetrain.setHeading(60);
+    // }
+    drivetrain.setHeading(0);
 
     return autoChooser.getSelected();
   }
@@ -165,7 +166,7 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new SwerveDrive());
     intake.setDefaultCommand(new IntakeHold());
     shooter.setDefaultCommand(new ShooterHold());
-    climber.setDefaultCommand(new ClimberHold());
+    // climber.setDefaultCommand(new ClimberHold());
     ampBar.setDefaultCommand(new AmpBarHold());
   }
 

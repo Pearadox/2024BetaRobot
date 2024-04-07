@@ -137,7 +137,7 @@ public final class Constants {
 
     public static final double AMP_PIVOT_POSITION = 26; //TODO: Pivot positions for amp passing speaker
     public static final double PASSING_PIVOT_POSITION = 29.5;
-    public static final double SPEAKER_PIVOT_POSITION = 32.3;
+    public static final double SPEAKER_PIVOT_POSITION = 32.4;
     public static final double TRAP_PIVOT_POSITION = 58;
     public static final double FLOOR_TO_SHOOTER = Units.inchesToMeters(7); //TODO: floor to shooter length
 
@@ -146,7 +146,7 @@ public final class Constants {
     public static final double SPEAKER_VOLTAGE = 5.5;
     public static final double TRAP_VOLTAGE = 4.3;
 
-    public static final double LEFT_TO_RIGHT_VOLTAGE_OFFSET = 2;
+    public static final double LEFT_TO_RIGHT_VOLTAGE_OFFSET = 2.5;
   }
 
   public static final class TransportConstants{
@@ -185,6 +185,7 @@ public final class Constants {
     public static final double DEPLOYED_ROT = -0.7;
     public static final double TRAP_ROT = -4.7;
     public static final double CLIMB_ROT = -3;
+    public static final double DEFENSE_ROT = -6.7;
   }
 
   public static final class FieldConstants{

@@ -6,8 +6,6 @@ package frc.robot.subsystems;
 
 import java.text.DecimalFormat;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -28,7 +26,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -52,7 +49,9 @@ public class Drivetrain extends SubsystemBase {
 
   private Pigeon2 gyro;
 
-  private static final NetworkTable llTable = NetworkTableInstance.getDefault().getTable(VisionConstants.SHOOTER_LL_NAME);
+  private static final NetworkTable shooterllTable = NetworkTableInstance.getDefault().getTable(VisionConstants.SHOOTER_LL_NAME);
+  private static final NetworkTable intakellTable = NetworkTableInstance.getDefault().getTable(VisionConstants.INTAKE_LL_NAME);
+
 
   public enum DriveMode{
     Normal, Align, NoteAlign
@@ -146,15 +145,15 @@ public class Drivetrain extends SubsystemBase {
     RobotContainer.poseEstimation.updateOdometry(getHeadingRotation2d(), getModulePositions());
 
     SmarterDashboard.putString("Drive Mode", getDriveMode().toString(), "Drivetrain");
-    SmarterDashboard.putString("Left Front Module State", leftFront.getState().toString(), "Drivetrain");
-    SmarterDashboard.putString("Right Front Module State", rightFront.getState().toString(), "Drivetrain");
-    SmarterDashboard.putString("Left Back Module State", leftBack.getState().toString(), "Drivetrain");
-    SmarterDashboard.putString("Right Back Module State", rightBack.getState().toString(), "Drivetrain");
     SmarterDashboard.putNumber("Robot Angle", getHeading(), "Drivetrain");
     SmarterDashboard.putString("Angular Speed", new DecimalFormat("#.00").format((-gyro.getRate() / 180)) + "\u03C0" + " rad/s", "Drivetrain");
     SmarterDashboard.putBoolean("Ready To Shoot", readyToShoot(), "Drivetrain");
-    SmartDashboard.putString("Odometry", getPose().toString());
-    Logger.recordOutput("Drivetrain/Odometry", getPose());
+
+    SmarterDashboard.putData("Left Front Module State", leftFront.getState(), "Drivetrain");
+    SmarterDashboard.putData("Right Front Module State", rightFront.getState(), "Drivetrain");
+    SmarterDashboard.putData("Left Back Module State", leftBack.getState(), "Drivetrain");
+    SmarterDashboard.putData("Right Back Module State", rightBack.getState(), "Drivetrain");
+    SmarterDashboard.putData("Odometry", getPose(), "Drivetrain");
 
     leftFrontStateEntry.setString(leftFront.getState().toString());
     rightFrontStateEntry.setString(rightFront.getState().toString());
@@ -178,7 +177,7 @@ public class Drivetrain extends SubsystemBase {
 
     frontSpeed = frontLimiter.calculate(frontSpeed) * SwerveConstants.TELE_DRIVE_MAX_SPEED;
     sideSpeed = sideLimiter.calculate(sideSpeed) * SwerveConstants.TELE_DRIVE_MAX_SPEED;
-    turnSpeed = turnLimiter.calculate(turnSpeed) * SwerveConstants.TELE_DRIVE_MAX_ANGULAR_SPEED;
+    turnSpeed = turnLimiter.calculate(turnSpeed) * SwerveConstants.TELE_DRIVE_MAX_ANGULAR_SPEED * (RobotContainer.driverController.getRightStickButton() ? 1.25 : 1);
 
     ChassisSpeeds chassisSpeeds;
     if(fieldOriented){
@@ -340,14 +339,15 @@ public class Drivetrain extends SubsystemBase {
     return false;
   }
 
+
   public double getAlignSpeed(){
     double alignSpeed;
 
     if(isRedAlliance()){
-      if(llTable.getEntry("tid").getDouble(0) == 4){
-        double error = llTable.getEntry("tx").getDouble(0);
+      if(shooterllTable.getEntry("tid").getDouble(0) == 4){
+        double error = shooterllTable.getEntry("tx").getDouble(0);
         
-        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(llTable.getEntry("tx").getDouble(0), 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
+        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(shooterllTable.getEntry("tx").getDouble(0), 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
       }
       else{
         double alignAngle = getAlignAngle(4);
@@ -370,10 +370,10 @@ public class Drivetrain extends SubsystemBase {
       }
     }
     else{
-      if(llTable.getEntry("tid").getDouble(0) == 7){
-        double error = llTable.getEntry("tx").getDouble(0);
+      if(shooterllTable.getEntry("tid").getDouble(0) == 7){
+        double error = shooterllTable.getEntry("tx").getDouble(0);
         
-        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(llTable.getEntry("tx").getDouble(0), 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
+        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(shooterllTable.getEntry("tx").getDouble(0), 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
       }
       else{
         double alignAngle = getAlignAngle(7);
@@ -399,14 +399,20 @@ public class Drivetrain extends SubsystemBase {
     return alignSpeed;
   }
 
+  public double getNoteAlignSpeed(){
+    double error = intakellTable.getEntry("tx").getDouble(0);
+    double alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(intakellTable.getEntry("tx").getDouble(0), 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
+    return alignSpeed;
+  }
+
   public double getSourceAlignSpeed(){
     double alignSpeed;
 
     if(isRedAlliance()){
-      if(llTable.getEntry("tid").getDouble(0) == 4){
-        double error = llTable.getEntry("tx").getDouble(0) + 3;
+      if(shooterllTable.getEntry("tid").getDouble(0) == 4){
+        double error = shooterllTable.getEntry("tx").getDouble(0) + 1;
         
-        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(llTable.getEntry("tx").getDouble(0) + 3, 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
+        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(shooterllTable.getEntry("tx").getDouble(0) + 1, 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
       }
       else{
         double alignAngle = getAlignAngle(4);
@@ -429,10 +435,10 @@ public class Drivetrain extends SubsystemBase {
       }
     }
     else{
-      if(llTable.getEntry("tid").getDouble(0) == 7){
-        double error = llTable.getEntry("tx").getDouble(0) - 3;
+      if(shooterllTable.getEntry("tid").getDouble(0) == 7){
+        double error = shooterllTable.getEntry("tx").getDouble(0) - 1;
         
-        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(llTable.getEntry("tx").getDouble(0) - 3, 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
+        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(shooterllTable.getEntry("tx").getDouble(0) - 1, 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
       }
       else{
         double alignAngle = getAlignAngle(7);
@@ -479,13 +485,13 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public boolean readyToShoot(){
-    double error = llTable.getEntry("tx").getDouble(0) - 2;
+    double error = shooterllTable.getEntry("tx").getDouble(0) - 2;
 
     if(isRedAlliance()){
-      return Math.abs(error) <= 0.5 && llTable.getEntry("tid").getDouble(0) == 4; 
+      return Math.abs(error) <= 0.5 && shooterllTable.getEntry("tid").getDouble(0) == 4; 
     }
     else{
-      return Math.abs(error) <= 0.5 && llTable.getEntry("tid").getDouble(0) == 7;
+      return Math.abs(error) <= 0.5 && shooterllTable.getEntry("tid").getDouble(0) == 7;
     }
   }
 

@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.AmpBar;
@@ -29,10 +30,13 @@ public class AmpBarHold extends Command {
     ampBar.ampBarHold();
 
     if(climber.getClimbSequenceStep() == -1){
-      if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95 && ampBar.getAmpBarMode() == AmpBarMode.Stowed){
+      if(RobotContainer.driverController.getRawButton(XboxController.Button.kA.value)){
+        ampBar.setDefenseMode();
+      }
+      else if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95 && (ampBar.getAmpBarMode() == AmpBarMode.Stowed || ampBar.getAmpBarMode() == AmpBarMode.Defense)){
         ampBar.setDeployedMode();
       }
-      else if (RobotContainer.driverController.getLeftTriggerAxis() < 0.95 && (ampBar.getAmpBarMode() == AmpBarMode.Deployed || ampBar.getAmpBarMode() == AmpBarMode.Climb)){
+      else if (RobotContainer.driverController.getLeftTriggerAxis() < 0.95 && ampBar.getAmpBarMode() == AmpBarMode.Deployed){
         ampBar.setStowedMode();
       }
     }

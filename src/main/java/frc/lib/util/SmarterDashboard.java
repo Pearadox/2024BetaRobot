@@ -6,7 +6,7 @@ package frc.lib.util;
 
 import org.littletonrobotics.junction.Logger;
 
-
+import edu.wpi.first.util.WPISerializable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Add your docs here. */
@@ -39,6 +39,11 @@ public class SmarterDashboard {
 
     public static void putStringArray(String key, String[] value, String subsystem) {
         SmartDashboard.putStringArray(key, value);
+        Logger.recordOutput(subsystem + "/" + key, value);
+    }
+
+    public static <T extends WPISerializable> void putData(String key, T value, String subsystem){
+        SmartDashboard.putString(key, value.toString());
         Logger.recordOutput(subsystem + "/" + key, value);
     }
 }
