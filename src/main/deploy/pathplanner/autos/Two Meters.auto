@@ -20,7 +20,19 @@
         {
           "type": "named",
           "data": {
+            "name": "Note Align"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Stop Modules"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Two Meters Back"
           }
         }
       ]

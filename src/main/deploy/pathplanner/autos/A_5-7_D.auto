@@ -2,25 +2,19 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.43,
-      "y": 1.55
+      "x": 1.45,
+      "y": 7.33
     },
-    "rotation": 0.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Set Shooter Auto"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "S_8"
+            "pathName": "A_5_D"
           }
         },
         {
@@ -32,7 +26,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S_8_R"
+            "pathName": "A_5_D_R"
           }
         },
         {
@@ -44,7 +38,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Source Auto Align"
+            "name": "Auto Align"
           }
         },
         {
@@ -56,7 +50,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S_7"
+            "pathName": "A_6_D"
           }
         },
         {
@@ -68,7 +62,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S_7_R"
+            "pathName": "A_6_D_R"
           }
         },
         {
@@ -80,7 +74,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Source Auto Align"
+            "name": "Auto Align"
           }
         },
         {
@@ -92,7 +86,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S_6"
+            "pathName": "A_7_D"
           }
         },
         {
@@ -102,9 +96,27 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "A_7_D_R"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "Stop Modules"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Align"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]

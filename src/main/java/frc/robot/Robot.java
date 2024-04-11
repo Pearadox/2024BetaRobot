@@ -108,6 +108,7 @@ public class Robot extends LoggedRobot {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     shooter.setBrakeMode(true);
     transport.setBrakeMode(true);
+    drivetrain.changeIntakePipeline(1);
 
     if(drivetrain.isRedAlliance()){
       llTable.getEntry("priorityid").setNumber(4);

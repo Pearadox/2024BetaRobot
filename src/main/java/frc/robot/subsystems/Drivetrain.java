@@ -46,18 +46,20 @@ public class Drivetrain extends SubsystemBase {
   private SlewRateLimiter turnLimiter;
 
   private PIDController alignPIDController;
+  private PIDController noteAlignPIDController;
 
   private Pigeon2 gyro;
 
   private static final NetworkTable shooterllTable = NetworkTableInstance.getDefault().getTable(VisionConstants.SHOOTER_LL_NAME);
-  private static final NetworkTable intakellTable = NetworkTableInstance.getDefault().getTable(VisionConstants.INTAKE_LL_NAME);
-
+  public static final NetworkTable intakellTable = NetworkTableInstance.getDefault().getTable(VisionConstants.INTAKE_LL_NAME);
 
   public enum DriveMode{
     Normal, Align, NoteAlign
   }
 
   private DriveMode driveMode = DriveMode.Normal;
+
+  private double lastHeading;
 
   public static final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
   private GenericEntry leftFrontStateEntry;
@@ -120,6 +122,8 @@ public class Drivetrain extends SubsystemBase {
     turnLimiter = new SlewRateLimiter(SwerveConstants.TELE_DRIVE_MAX_ANGULAR_ACCELERATION);
 
     alignPIDController = new PIDController(SwerveConstants.kP_PERCENT, 0, 0);
+    noteAlignPIDController = new PIDController(SwerveConstants.kP_PERCENT, 0, 0);
+
 
     gyro = new Pigeon2(SwerveConstants.PIGEON_ID);
     
@@ -131,6 +135,8 @@ public class Drivetrain extends SubsystemBase {
       SwerveConstants.AUTO_CONFIG,
       () -> isRedAlliance(),
       this);
+
+    lastHeading = getHeading();
 
     leftFrontStateEntry = swerveTab.add("Left Front Module State", leftFront.getState().toString()).withSize(4, 1).withPosition(0, 0).getEntry();
     rightFrontStateEntry = swerveTab.add("Right Front Module State", rightFront.getState().toString()).withSize(4, 1).withPosition(0, 1).getEntry();
@@ -361,6 +367,7 @@ public class Drivetrain extends SubsystemBase {
           error += 360;
         }
         
+
         if(Math.abs(error) > 1){
           alignSpeed = Math.signum(-error) * SwerveConstants.kS_PERCENT + SwerveConstants.kP_PERCENT * -error;
         }
@@ -400,9 +407,19 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getNoteAlignSpeed(){
-    double error = intakellTable.getEntry("tx").getDouble(0);
-    double alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(intakellTable.getEntry("tx").getDouble(0), 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
+    double error = intakellTable.getEntry("tx").getDouble(0) + 2;
+    double kS = error > 0 ? SwerveConstants.kS_PERCENT * 1.75 : SwerveConstants.kS_PERCENT * 0.75;
+
+    double alignSpeed = Math.abs(error) > 2 ? -noteAlignPIDController.calculate(error, 0) + (Math.signum(error) * kS) : 0;
     return alignSpeed;
+  }
+
+  public void recordLastHeading(){
+    lastHeading = getHeading();
+  }
+
+  public void setLastHeading(){
+    setHeading(lastHeading);
   }
 
   public double getSourceAlignSpeed(){
@@ -541,6 +558,10 @@ public class Drivetrain extends SubsystemBase {
     double deltaY = targetPose.getY() - robotPose.getY();
 
     return Math.hypot(Math.abs(deltaX), Math.abs(deltaY)) > 8 ? Math.hypot(Math.abs(deltaX), Math.abs(deltaY)) : 8;
+  }
+
+  public void changeIntakePipeline(int pipeline){
+    intakellTable.getEntry("pipeline").setNumber(pipeline);
   }
 
   public DriveMode getDriveMode(){

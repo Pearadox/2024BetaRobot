@@ -11,6 +11,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -64,6 +65,7 @@ public class RobotContainer {
   private final JoystickButton zeroingShooter_X = new JoystickButton(driverController, XboxController.Button.kX.value);
   private final JoystickButton outtake_B = new JoystickButton(driverController, XboxController.Button.kB.value);
   private final JoystickButton turnToApril_LB = new JoystickButton(driverController, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton turnToNote_LS = new JoystickButton(driverController, XboxController.Button.kLeftStick.value);
 
   //Operator Controls
   public static final CommandXboxController commandOpController = new CommandXboxController(IOConstants.OP_CONTROLLER_PORT);
@@ -118,6 +120,9 @@ public class RobotContainer {
     outtake_B.whileTrue(new Outtake());
     turnToApril_LB.onTrue(new InstantCommand(() -> drivetrain.setAlignMode()))
       .onFalse(new InstantCommand(() -> drivetrain.setNormalMode()));
+    turnToNote_LS.onTrue(new InstantCommand(() -> drivetrain.setNoteAlignMode())
+      .andThen(new InstantCommand(() -> drivetrain.changeIntakePipeline(1))))
+      .onFalse(new InstantCommand(() -> drivetrain.setNormalMode()));
 
     //Operator Buttons
     shooterAutoMode_A.onTrue(new InstantCommand(() -> shooter.setAutoMode()));
@@ -160,11 +165,18 @@ public class RobotContainer {
     NamedCommands.registerCommand("Set Shooter Auto", new InstantCommand(() -> shooter.setShooterAuto(0.85)));
     NamedCommands.registerCommand("Reset Heading", new InstantCommand(drivetrain::zeroHeading, drivetrain));
     NamedCommands.registerCommand("7 Note Set Pivot Position", new InstantCommand(() -> shooter.setPivotPosition(11.5)));
+    NamedCommands.registerCommand("Note Align", new RunCommand(() -> drivetrain.swerveDrive(
+      0.5, 
+      0, 
+      -drivetrain.getNoteAlignSpeed(),
+      false,
+      new Translation2d(),
+      true)).withTimeout(0.55));
   }
 
   public void setDefaultCommands(){
     drivetrain.setDefaultCommand(new SwerveDrive());
-    intake.setDefaultCommand(new IntakeHold());
+   // intake.setDefaultCommand(new IntakeHold());
     shooter.setDefaultCommand(new ShooterHold());
     // climber.setDefaultCommand(new ClimberHold());
     ampBar.setDefaultCommand(new AmpBarHold());

@@ -17,6 +17,7 @@ public class SwerveDrive extends Command {
   private Drivetrain drivetrain = Drivetrain.getInstance();
   private ShooterKraken shooter = ShooterKraken.getInstance();
   private XboxController driverController = RobotContainer.driverController;
+  
 
   /** Creates a new SwerveDrive. */
   public SwerveDrive() {
@@ -53,6 +54,15 @@ public class SwerveDrive extends Command {
       if(drivetrain.readyToShoot() && shooter.readyToShoot()){
         CommandScheduler.getInstance().schedule(drivetrain.rumbleController());
       }
+    }
+    else if(drivetrain.getDriveMode() == Drivetrain.DriveMode.NoteAlign){
+      drivetrain.swerveDrive(
+          0.5, 
+          0, 
+          -drivetrain.getNoteAlignSpeed(),
+          false,
+          new Translation2d(),
+          true);
     }
     else{
       drivetrain.swerveDrive(
