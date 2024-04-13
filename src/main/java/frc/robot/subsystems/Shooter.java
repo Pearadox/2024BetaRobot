@@ -402,8 +402,9 @@ public class Shooter extends SubsystemBase {
     pivot.setIdleMode(IdleMode.kCoast);
     SmarterDashboard.putString("CheatMode", "enabled", "Shooter");
   }
-
+  
   public void detention(){
     pivot.setIdleMode(IdleMode.kBrake);
+    SmarterDashboard.putString("CheatMode", "disabled", "Shooter");
   }
 }
