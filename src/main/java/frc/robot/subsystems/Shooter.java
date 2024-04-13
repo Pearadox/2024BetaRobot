@@ -397,4 +397,13 @@ public class Shooter extends SubsystemBase {
   public boolean readyToShoot() {
     return (Math.abs(pivotPosition + pivotAdjust - pivotEncoder.getPosition()) <= 0.9);
   }
+
+  
+  public void cheat(){
+    pivot.setIdleMode(IdleMode.kCoast);
+  }
+
+  public void detention(){
+    pivot.setIdleMode(IdleMode.kBrake);
+  }
 }
