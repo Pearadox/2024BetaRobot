@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -34,6 +35,7 @@ import frc.robot.commands.ShooterHold;
 import frc.robot.commands.SourceAutoAlign;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.AmpBar;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.ShooterKraken;
@@ -50,7 +52,7 @@ public class RobotContainer {
   public static final Drivetrain drivetrain = Drivetrain.getInstance();
   public static final Intake intake = Intake.getInstance();
   public static final Transport transport = Transport.getInstance();
-  // public static final Climber climber = Climber.getInstance();
+  public static final Climber climber = Climber.getInstance();
 //  public static final Shooter shooter = Shooter.getInstance();
   public static final AmpBar ampBar = AmpBar.getInstance();
   public static final ShooterKraken shooter = ShooterKraken.getInstance();
@@ -77,6 +79,8 @@ public class RobotContainer {
   private final JoystickButton shooterSpeakerMode_X = new JoystickButton(opController, XboxController.Button.kX.value);
   // private final JoystickButton resetClimbSequence_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
   // private final JoystickButton nextClimbSequenceStep_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
+  private final JoystickButton climberLower_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton climberClimb_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
 
   //Pose Estimation
   public static final PoseEstimation poseEstimation = new PoseEstimation();
@@ -134,6 +138,17 @@ public class RobotContainer {
     //   .andThen(new InstantCommand(() -> climber.setZeroing(false)))
     //   .andThen(new InstantCommand(() -> climber.resetClimbSequence())));
     // nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
+
+    climberLower_LB.whileTrue(
+      new FunctionalCommand(() -> climber.setLoweringMode(),
+        () -> {},
+        interrupted -> climber.setStoppedMode(),
+        () -> climber.getOutputCurrent() > 40,
+        climber)
+    );
+
+    climberClimb_RB.onTrue(new InstantCommand(() -> climber.setClimbingMode(), climber))
+      .onFalse(new InstantCommand(() -> climber.setStoppedMode(), climber));
   }
 
   /**
@@ -176,7 +191,7 @@ public class RobotContainer {
 
   public void setDefaultCommands(){
     drivetrain.setDefaultCommand(new SwerveDrive());
-   // intake.setDefaultCommand(new IntakeHold());
+   intake.setDefaultCommand(new IntakeHold());
     shooter.setDefaultCommand(new ShooterHold());
     // climber.setDefaultCommand(new ClimberHold());
     ampBar.setDefaultCommand(new AmpBarHold());

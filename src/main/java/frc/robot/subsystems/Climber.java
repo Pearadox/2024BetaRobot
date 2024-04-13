@@ -116,4 +116,25 @@ public class Climber extends SubsystemBase {
   public boolean getZeroing(){
     return zeroing;
   }
+
+  public void setClimbingMode() {
+    leftClimber.set(0.75);
+    rightClimber.set(0.75);
+  }
+
+  public void setStoppedMode() {
+    leftClimber.stopMotor();
+    rightClimber.stopMotor();
+  }
+
+  public void setLoweringMode() {
+    leftClimber.set(-0.75);
+    rightClimber.set(-0.75);
+  }
+
+  public double getOutputCurrent() {
+    double c1 = leftClimber.getOutputCurrent();
+    double c2 = rightClimber.getOutputCurrent();
+    return (c1 + c2) / 2.0;
+  }
 }
