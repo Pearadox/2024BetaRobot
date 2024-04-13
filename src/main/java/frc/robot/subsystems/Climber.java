@@ -58,6 +58,13 @@ public class Climber extends SubsystemBase {
     SmarterDashboard.putNumber("Right Climber Position", getRightPosition(), "Climber");
     SmarterDashboard.putString("ClimbMode", getClimbMode().toString(), "Climber");
     SmarterDashboard.putNumber("Climber Adjust", climberAdjust, "Climber");
+
+    if (climbMode == ClimbMode.Climbing) {
+      setClimberPosition(ClimberConstants.CLIMBING_ROT);
+    } else {
+      setClimberPosition(0);
+    }
+    
   }
 
   public void setNormalMode(){

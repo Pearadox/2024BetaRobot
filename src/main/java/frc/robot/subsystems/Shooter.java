@@ -398,9 +398,9 @@ public class Shooter extends SubsystemBase {
     return (Math.abs(pivotPosition + pivotAdjust - pivotEncoder.getPosition()) <= 0.9);
   }
 
-  
   public void cheat(){
     pivot.setIdleMode(IdleMode.kCoast);
+    SmarterDashboard.putString("CheatMode", "enabled", "Shooter");
   }
 
   public void detention(){

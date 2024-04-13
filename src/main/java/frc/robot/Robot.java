@@ -16,8 +16,11 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Shooter;
@@ -97,6 +100,11 @@ public class Robot extends LoggedRobot {
     drivetrain.setAllIdleMode(true);
     shooter.setBrakeMode(false);
     transport.setBrakeMode(false);
+
+    Trigger coastMode = new Trigger(
+      () -> 
+      DriverStation.isDisabled() && transport.hasNote());
+    coastMode.toggleOnTrue(new InstantCommand(()-> Shooter.getInstance().cheat()));
   }
 
   @Override
@@ -108,6 +116,7 @@ public class Robot extends LoggedRobot {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     shooter.setBrakeMode(true);
     transport.setBrakeMode(true);
+    Shooter.getInstance().detention();
 
     if(drivetrain.isRedAlliance()){
       llTable.getEntry("priorityid").setNumber(4);
@@ -140,6 +149,7 @@ public class Robot extends LoggedRobot {
     drivetrain.setAllIdleMode(true);
     shooter.setBrakeMode(true);
     transport.setBrakeMode(true);
+    Shooter.getInstance().detention();
 
     if(drivetrain.isRedAlliance()){
       llTable.getEntry("priorityid").setNumber(4);

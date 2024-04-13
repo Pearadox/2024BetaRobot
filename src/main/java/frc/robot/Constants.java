@@ -191,7 +191,7 @@ public final class Constants {
     public static final int LEFT_CLIMBER_ID = 26;
     public static final int RIGHT_CLIMBER_ID = 25;
 
-    public static final double CLIMBING_ROT = 0;
+    public static final double CLIMBING_ROT = 1;
     public static final double CLIMB_ROT = 0;
   }
 }
