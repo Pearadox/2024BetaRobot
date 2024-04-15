@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void utbIntakeIn(){
-    utbRoller.set(0.6);
+    utbRoller.set(0.8);
   }
 
   public void utbIntakeOut(){
