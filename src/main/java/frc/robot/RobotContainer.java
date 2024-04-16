@@ -127,32 +127,18 @@ public class RobotContainer {
     //   .andThen(new InstantCommand(() -> climber.resetClimbSequence())));
     // nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
 
-    // climberPrepare_LB.onTrue(
-    //   new FunctionalCommand(() -> climber.setClimbingMode(),
-    //     () -> {},
-    //     interrupted -> climber.setStoppedMode(),
-    //     () -> climber.isAtLimit(),
-    //     climber)
-    // ).onFalse(new InstantCommand(() -> climber.setStoppedMode()));
+    climberPrepare_LB.onTrue(new InstantCommand(() -> shooter.setClimbingMode(), shooter));
+    climberPrepare_LB.whileTrue(new FunctionalCommand(() -> climber.setClimbingMode(),
+        () -> {},
+        interrupted -> climber.setStoppedMode(),
+        () -> climber.isAtLimit(),
+        climber)
+      );
+    climberPrepare_LB.onFalse(new InstantCommand(() -> climber.setStoppedMode()));
 
-    // climberPrepare_LB.onTrue(
-    //   new InstantCommand(() -> shooter.setClimbingMode(), shooter)
-    //   .alongWith(new RunCommand(() -> climber.setClimbingMode(), climber)
-    //     .until(() -> climber.isAtLimit())
-    //     .handleInterrupt(() -> climber.setStoppedMode()))
-    // ).onFalse(new InstantCommand(() -> climber.setStoppedMode()));
-    
-    // climberPrepare_LB.onTrue(new InstantCommand(() -> shooter.setClimbingMode(), shooter));
-    // climberPrepare_LB.whileTrue(new FunctionalCommand(() -> climber.setClimbingMode(),
-    //     () -> {},
-    //     interrupted -> climber.setStoppedMode(),
-    //     () -> climber.isAtLimit(),
-    //     climber)
-    //   );
-    // climberPrepare_LB.onFalse(new InstantCommand(() -> climber.setStoppedMode()));
-
-    climberPrepare_LB.onTrue(new ClimberPrepare())
-      .onFalse(new InstantCommand(() -> climber.setStoppedMode(), climber));
+    //Functionally, this should be the same as the one immediately above - both still do not stop the hooks going up
+    // climberPrepare_LB.onTrue(new ClimberPrepare())
+    //   .onFalse(new InstantCommand(() -> climber.setStoppedMode(), climber));
 
     climberLift_RB.onTrue(new InstantCommand(() -> climber.setLiftingMode(), climber))
       .onFalse(new InstantCommand(() -> climber.setStoppedMode(), climber));

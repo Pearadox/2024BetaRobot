@@ -6,9 +6,11 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.ShooterKraken;
 
 public class ClimberPrepare extends Command {
   private Climber climber = Climber.getInstance();
+  private ShooterKraken shooter = ShooterKraken.getInstance();
 
   public ClimberPrepare() {
     addRequirements(climber);
@@ -18,6 +20,7 @@ public class ClimberPrepare extends Command {
   @Override
   public void initialize() {
     climber.setClimbingMode();
+    shooter.setClimbingMode();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
