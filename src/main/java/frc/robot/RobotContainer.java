@@ -26,20 +26,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.drivers.vision.PoseEstimation;
 import frc.robot.Constants.IOConstants;
-import frc.robot.commands.AmpBarHold;
-import frc.robot.commands.AutoAlign;
-import frc.robot.commands.IntakeHold;
-import frc.robot.commands.Outtake;
-import frc.robot.commands.Shoot;
-import frc.robot.commands.ShooterHold;
-import frc.robot.commands.SourceAutoAlign;
-import frc.robot.commands.SwerveDrive;
-import frc.robot.subsystems.AmpBar;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.ShooterKraken;
-import frc.robot.subsystems.Transport;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -79,8 +67,8 @@ public class RobotContainer {
   private final JoystickButton shooterSpeakerMode_X = new JoystickButton(opController, XboxController.Button.kX.value);
   // private final JoystickButton resetClimbSequence_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
   // private final JoystickButton nextClimbSequenceStep_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
-  private final JoystickButton climberLower_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
-  private final JoystickButton climberClimb_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
+  private final JoystickButton climberPrepare_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton climberLift_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
 
   //Pose Estimation
   public static final PoseEstimation poseEstimation = new PoseEstimation();
@@ -139,15 +127,34 @@ public class RobotContainer {
     //   .andThen(new InstantCommand(() -> climber.resetClimbSequence())));
     // nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
 
-    climberLower_LB.whileTrue(
-      new FunctionalCommand(() -> climber.setLoweringMode(),
-        () -> {},
-        interrupted -> climber.setStoppedMode(),
-        () -> climber.getOutputCurrent() > 40,
-        climber)
-    );
+    // climberPrepare_LB.onTrue(
+    //   new FunctionalCommand(() -> climber.setClimbingMode(),
+    //     () -> {},
+    //     interrupted -> climber.setStoppedMode(),
+    //     () -> climber.isAtLimit(),
+    //     climber)
+    // ).onFalse(new InstantCommand(() -> climber.setStoppedMode()));
 
-    climberClimb_RB.onTrue(new InstantCommand(() -> climber.setClimbingMode(), climber))
+    // climberPrepare_LB.onTrue(
+    //   new InstantCommand(() -> shooter.setClimbingMode(), shooter)
+    //   .alongWith(new RunCommand(() -> climber.setClimbingMode(), climber)
+    //     .until(() -> climber.isAtLimit())
+    //     .handleInterrupt(() -> climber.setStoppedMode()))
+    // ).onFalse(new InstantCommand(() -> climber.setStoppedMode()));
+    
+    // climberPrepare_LB.onTrue(new InstantCommand(() -> shooter.setClimbingMode(), shooter));
+    // climberPrepare_LB.whileTrue(new FunctionalCommand(() -> climber.setClimbingMode(),
+    //     () -> {},
+    //     interrupted -> climber.setStoppedMode(),
+    //     () -> climber.isAtLimit(),
+    //     climber)
+    //   );
+    // climberPrepare_LB.onFalse(new InstantCommand(() -> climber.setStoppedMode()));
+
+    climberPrepare_LB.onTrue(new ClimberPrepare())
+      .onFalse(new InstantCommand(() -> climber.setStoppedMode(), climber));
+
+    climberLift_RB.onTrue(new InstantCommand(() -> climber.setLiftingMode(), climber))
       .onFalse(new InstantCommand(() -> climber.setStoppedMode(), climber));
   }
 
@@ -191,10 +198,10 @@ public class RobotContainer {
 
   public void setDefaultCommands(){
     drivetrain.setDefaultCommand(new SwerveDrive());
-   intake.setDefaultCommand(new IntakeHold());
+    intake.setDefaultCommand(new IntakeHold());
     shooter.setDefaultCommand(new ShooterHold());
-    // climber.setDefaultCommand(new ClimberHold());
     ampBar.setDefaultCommand(new AmpBarHold());
+    // climber.setDefaultCommand(new ClimberHold());
   }
 
   private void configureAutoTab() {
