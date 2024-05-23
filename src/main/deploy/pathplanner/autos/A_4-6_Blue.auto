@@ -1,0 +1,127 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.45,
+      "y": 7.33
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A_4_Blue"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Note Align"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A_4_R_Blue"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Modules"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Align"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A_5_Blue"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Note Align"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A_5_R_Blue"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Modules"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Align"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A_6_Blue"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Note Align"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A_6_R_Blue"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Modules"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Align"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

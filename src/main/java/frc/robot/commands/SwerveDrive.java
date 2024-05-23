@@ -7,16 +7,17 @@ package frc.robot.commands;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.ShooterKraken;
+import frc.robot.subsystems.ShooterKraken.ShooterMode;
 
-enum driveState{ 
-  NORMAL,
-  ALIGN
-}
 public class SwerveDrive extends Command {
   private Drivetrain drivetrain = Drivetrain.getInstance();
-  driveState state = driveState.NORMAL;
+  private ShooterKraken shooter = ShooterKraken.getInstance();
+  private XboxController driverController = RobotContainer.driverController;
+  
 
   /** Creates a new SwerveDrive. */
   public SwerveDrive() {
@@ -31,13 +32,77 @@ public class SwerveDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if(drivetrain.getDriveMode() == Drivetrain.DriveMode.Align){
+      if(shooter.getShooterMode() == ShooterMode.SourcePassing){
+        if(drivetrain.isRedAlliance()){
+          drivetrain.swerveDrive(
+            -driverController.getLeftY(), 
+            -driverController.getLeftX(), 
+            -1,
+            1,
+            true,
+            new Translation2d(),
+            true,
+            true,
+            true);
+        }
+        else{
+          drivetrain.swerveDrive(
+            -driverController.getLeftY(), 
+            -driverController.getLeftX(), 
+            0.5,
+            0.866,
+            true,
+            new Translation2d(),
+            true,
+            true,
+            true);
+        }
+      }
+      else if(shooter.getShooterMode() == ShooterMode.AmpPassing){
         drivetrain.swerveDrive(
-        -RobotContainer.driverController.getLeftY(), 
-        -RobotContainer.driverController.getLeftX(), 
-        -RobotContainer.driverController.getRightX(),
-        !RobotContainer.driverController.getRawButton(XboxController.Button.kB.value),
+            -driverController.getLeftY(), 
+            -driverController.getLeftX(), 
+            0,
+            1,
+            true,
+            new Translation2d(),
+            true,
+            true,
+            true);
+      }
+      else{
+        drivetrain.swerveDrive(
+          -driverController.getLeftY(), 
+          -driverController.getLeftX(), 
+          -drivetrain.getAlignSpeed(),
+          true,
+          new Translation2d(),
+          true);
+      }
+
+      if(drivetrain.readyToShoot() && shooter.readyToShoot()){
+        CommandScheduler.getInstance().schedule(drivetrain.rumbleController());
+      }
+    }
+    else if(drivetrain.getDriveMode() == Drivetrain.DriveMode.NoteAlign){
+      drivetrain.swerveDrive(
+          0.5, 
+          0, 
+          -drivetrain.getNoteAlignSpeed(),
+          false,
+          new Translation2d(),
+          true);
+    }
+    else{
+      drivetrain.swerveDrive(
+        -driverController.getLeftY(), 
+        -driverController.getLeftX(), 
+        -driverController.getRightX(),
+        RobotContainer.driverController.getRightTriggerAxis() < 0.9,
         new Translation2d(),
         true);
+    }
   }
 
   // Called once the command ends or is interrupted.

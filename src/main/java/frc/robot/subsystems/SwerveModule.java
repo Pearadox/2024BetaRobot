@@ -4,37 +4,42 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.drivers.PearadoxSparkMax;
 import frc.lib.drivers.PearadoxTalonFX;
+import frc.lib.util.SmarterDashboard;
 import frc.robot.Constants.SwerveConstants;
 
 public class SwerveModule extends SubsystemBase {
   private PearadoxTalonFX driveMotor;
-  private PearadoxSparkMax turnMotor;
-
-  private RelativeEncoder turnEncoder;
+  private PearadoxTalonFX turnMotor;
 
   private PIDController turnPIDController;
   private CANcoder absoluteEncoder;
 
   private double absoluteEncoderOffset;
 
+  private StatusSignal<Double> drivePosition;
+  private StatusSignal<Double> driveVelocity;
+  private StatusSignal<Double> turnPosition;
+  private StatusSignal<Double> turnVelocity;
+  private StatusSignal<Double> absoluteEncoderAngle;
+  private StatusSignal<Double> driveCurrent;
+  private StatusSignal<Double> turnCurrent;
+
   private Rotation2d lastAngle;
 
   private DutyCycleOut driveMotorRequest = new DutyCycleOut(0.0);
+  private DutyCycleOut turnMotorRequest = new DutyCycleOut(0.0);
 
   /** Creates a new SwerveModule. */
   public SwerveModule(int driveMotorId, int turnMotorId, boolean driveMotorReversed, boolean turnMotorReversed,
@@ -44,12 +49,22 @@ public class SwerveModule extends SubsystemBase {
       absoluteEncoder = new CANcoder(absoluteEncoderId);
 
       driveMotor = new PearadoxTalonFX(driveMotorId, NeutralModeValue.Coast, 45, driveMotorReversed);
-      turnMotor = new PearadoxSparkMax(turnMotorId, MotorType.kBrushless, IdleMode.kCoast, 25, turnMotorReversed);
-
-      turnEncoder = turnMotor.getEncoder();
+      turnMotor = new PearadoxTalonFX(turnMotorId, NeutralModeValue.Brake, 25, turnMotorReversed);
 
       turnPIDController = new PIDController(SwerveConstants.KP_TURNING, 0, 0);
       turnPIDController.enableContinuousInput(-Math.PI, Math.PI);
+
+      drivePosition = driveMotor.getPosition();
+      driveVelocity = driveMotor.getVelocity();
+      turnPosition = turnMotor.getPosition();
+      turnVelocity = turnMotor.getVelocity();
+      absoluteEncoderAngle = absoluteEncoder.getAbsolutePosition();
+      driveCurrent = driveMotor.getStatorCurrent();
+      turnCurrent = turnMotor.getStatorCurrent();
+
+      BaseStatusSignal.setUpdateFrequencyForAll(50, drivePosition, driveVelocity, turnPosition, turnVelocity, absoluteEncoderAngle, driveCurrent, turnCurrent);
+      driveMotor.optimizeBusUtilization();
+      turnMotor.optimizeBusUtilization();
 
       resetEncoders();
       lastAngle = getState().angle;
@@ -58,19 +73,21 @@ public class SwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Drive Distance (rot) - Motor: " + driveMotor.getDeviceID(), getDriveMotorPosition());
-    SmartDashboard.putNumber("Wheel Position (rot) - Motor: " + driveMotor.getDeviceID(), getTurnMotorPosition());
-    SmartDashboard.putNumber("Absolute Wheel Angle (deg) - Motor: " + driveMotor.getDeviceID(), absoluteEncoder.getAbsolutePosition().getValueAsDouble());
+    SmarterDashboard.putNumber("Drive Distance (rot) - Motor: " + driveMotor.getDeviceID(), getDriveMotorPosition(), "SwerveModule");
+    SmarterDashboard.putNumber("Wheel Position (rot) - Motor: " + driveMotor.getDeviceID(), getTurnMotorPosition(), "SwerveModule");
+    SmarterDashboard.putNumber("Drive Motor " + driveMotor.getDeviceID() + " Current", driveMotor.getStatorCurrent().getValueAsDouble(), "SwerveModule");
+    SmarterDashboard.putNumber("Turn Motor " + driveMotor.getDeviceID() + " Current", turnMotor.getStatorCurrent().getValueAsDouble(), "SwerveModule");
+    SmarterDashboard.putNumber("Absolute Wheel Angle (deg) - Motor: " + driveMotor.getDeviceID(), absoluteEncoder.getAbsolutePosition().getValueAsDouble(), "SwerveModule");
   }
 
   public void setBrake(boolean brake){
     if(brake){
       driveMotor.setNeutralMode(NeutralModeValue.Brake);
-      turnMotor.setIdleMode(IdleMode.kCoast);
+      turnMotor.setNeutralMode(NeutralModeValue.Coast);
     }
     else{
       driveMotor.setNeutralMode(NeutralModeValue.Coast);
-      turnMotor.setIdleMode(IdleMode.kCoast);
+      turnMotor.setNeutralMode(NeutralModeValue.Coast);
     }
   }
   
@@ -83,11 +100,11 @@ public class SwerveModule extends SubsystemBase {
   }
 
   public double getTurnMotorPosition(){
-    return turnEncoder.getPosition() * SwerveConstants.TURN_MOTOR_PCONVERSION;
+    return turnMotor.getPosition().getValueAsDouble() * SwerveConstants.TURN_MOTOR_PCONVERSION;
   }
 
   public double getTurnMotorVelocity(){
-    return turnEncoder.getVelocity() * SwerveConstants.TURN_MOTOR_VCONVERSION;
+    return turnMotor.getVelocity().getValueAsDouble() * SwerveConstants.TURN_MOTOR_VCONVERSION;
   }
 
   public double getAbsoluteEncoderAngle(){
@@ -99,7 +116,7 @@ public class SwerveModule extends SubsystemBase {
 
   public void resetEncoders(){
     driveMotor.setPosition(0);
-    turnEncoder.setPosition(getAbsoluteEncoderAngle() / SwerveConstants.TURN_MOTOR_PCONVERSION);
+    turnMotor.setPosition(getAbsoluteEncoderAngle() / SwerveConstants.TURN_MOTOR_PCONVERSION);
   }
 
   public SwerveModuleState getState(){
@@ -115,8 +132,6 @@ public class SwerveModule extends SubsystemBase {
     
     setAngle(desiredState);
     setSpeed(desiredState);
-
-    SmartDashboard.putString("Swerve [" + driveMotor.getDeviceID() + "] State", getState().toString());
   }
 
   public void setSpeed(SwerveModuleState desiredState){
@@ -126,12 +141,16 @@ public class SwerveModule extends SubsystemBase {
   public void setAngle(SwerveModuleState desiredState){
     Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (SwerveConstants.DRIVETRAIN_MAX_SPEED * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
     
-    turnMotor.set(turnPIDController.calculate(getTurnMotorPosition(), desiredState.angle.getRadians()));
+    turnMotor.setControl(turnMotorRequest.withOutput(turnPIDController.calculate(getTurnMotorPosition(), desiredState.angle.getRadians())));
     lastAngle = angle;
   }
 
   public void stop(){
     driveMotor.setControl(driveMotorRequest.withOutput(0));
-    turnMotor.set(0);
+    turnMotor.setControl(turnMotorRequest.withOutput(0));
+  }
+
+  public int getDeviceID(){
+    return driveMotor.getDeviceID();
   }
 }
