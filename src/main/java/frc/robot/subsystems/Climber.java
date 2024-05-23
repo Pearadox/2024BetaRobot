@@ -5,10 +5,6 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
-<<<<<<< HEAD
-import com.revrobotics.SparkMaxPIDController;
-=======
->>>>>>> Merge
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -16,19 +12,12 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.drivers.PearadoxSparkMax;
-<<<<<<< HEAD
-import frc.robot.Constants.ClimberConstants;
-
-public class Climber extends SubsystemBase {
-  /** Creates a new Climber. */
-=======
 import frc.lib.util.SmarterDashboard;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ClimberConstants;
 
 public class Climber extends SubsystemBase {
 
->>>>>>> Merge
   private static PearadoxSparkMax leftClimber;
   private static PearadoxSparkMax rightClimber;
 
@@ -40,29 +29,14 @@ public class Climber extends SubsystemBase {
 
   private static Climber climber = new Climber();
 
-<<<<<<< HEAD
-  private static climberState state = climberState.Down;
-
-  public enum climberState{
-    Climb,
-    Down
-  }
-=======
   private double climberAdjust = 0;
   private boolean zeroing = false;
   private int climbSequenceStep = -1;
->>>>>>> Merge
 
   public static Climber getInstance(){
     return climber;
   }
 
-<<<<<<< HEAD
-
-  public Climber() {
-    leftClimber = new PearadoxSparkMax(ClimberConstants.LEFT_CLIMBER_ID, MotorType.kBrushless, IdleMode.kBrake , 35, false);//TODO: Check for inversion
-    rightClimber = new PearadoxSparkMax(ClimberConstants.RIGHT_CLIMBER_ID, MotorType.kBrushless, IdleMode.kBrake , 35, true);
-=======
   public Climber() {
     leftClimber = new PearadoxSparkMax(ClimberConstants.LEFT_CLIMBER_ID, MotorType.kBrushless, IdleMode.kBrake, 60, true,
       ClimberConstants.CLIMBER_kP, ClimberConstants.CLIMBER_kI, ClimberConstants.CLIMBER_kD, 
@@ -71,7 +45,6 @@ public class Climber extends SubsystemBase {
       ClimberConstants.CLIMBER_kP, ClimberConstants.CLIMBER_kI, ClimberConstants.CLIMBER_kD, 
       ClimberConstants.CLIMBER_MIN_OUTPUT, ClimberConstants.CLIMBER_MAX_OUTPUT);//TODO: Check for inversion
 
->>>>>>> Merge
     leftClimberController = leftClimber.getPIDController();
     rightClimberController = rightClimber.getPIDController();
     leftClimberEncoder = leftClimber.getEncoder();
@@ -80,39 +53,6 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-<<<<<<< HEAD
-    // This method will be called once per scheduler run
-  }
-  public void setDown(){
-    state = climberState.Down;
-  }
-
-  public void setClimb(){
-    state = climberState.Climb;
-  }
-
-  public climberState getState(){
-    return state;
-  }
-
-  public void setClimbReference(double reference){
-    leftClimberController.setReference(reference,ControlType.kPosition,0);
-    rightClimberController.setReference(reference, ControlType.kPosition,0);
-  }
-  public void setPower(double power){
-    leftClimber.set(power);
-    rightClimber.set(power);
-  }
-
-  public double getRightPose(){
-    return rightClimberEncoder.getPosition();
-  }
-
-  public double getLeftPose(){
-    return leftClimberEncoder.getPosition();
-  }
-}
-=======
     SmarterDashboard.putNumber("Left Climber Position", getLeftPosition(), "Climber");
     SmarterDashboard.putNumber("Right Climber Position", getRightPosition(), "Climber");
     SmarterDashboard.putNumber("Left Climber Current", leftClimber.getOutputCurrent(), "Climber");
@@ -203,4 +143,3 @@ public class Climber extends SubsystemBase {
     return (c1 + c2) / 2.0;
   }
 }
->>>>>>> Merge
