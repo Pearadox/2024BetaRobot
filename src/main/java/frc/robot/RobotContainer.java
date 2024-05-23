@@ -27,7 +27,6 @@ import frc.lib.drivers.vision.PoseEstimation;
 import frc.robot.Constants.IOConstants;
 import frc.robot.commands.AmpBarHold;
 import frc.robot.commands.AutoAlign;
-import frc.robot.commands.ClimberHold;
 import frc.robot.commands.IntakeHold;
 import frc.robot.commands.Outtake;
 import frc.robot.commands.Shoot;
@@ -76,8 +75,10 @@ public class RobotContainer {
   private final JoystickButton shooterAmpPassingMode_Start = new JoystickButton(opController, XboxController.Button.kStart.value);
   private final JoystickButton shooterManualMode_B = new JoystickButton(opController, XboxController.Button.kB.value);
   private final JoystickButton shooterSpeakerMode_X = new JoystickButton(opController, XboxController.Button.kX.value);
-  private final JoystickButton resetClimbSequence_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
-  private final JoystickButton nextClimbSequenceStep_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
+  // private final JoystickButton resetClimbSequence_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
+  // private final JoystickButton nextClimbSequenceStep_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
+  private final JoystickButton climberLower_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton climberClimb_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
 
   //Pose Estimation
   public static final PoseEstimation poseEstimation = new PoseEstimation();
@@ -131,11 +132,22 @@ public class RobotContainer {
     shooterSourcePassingMode_Y.onTrue(new InstantCommand(() -> shooter.setSourcePassingMode()));
     shooterAmpPassingMode_Start.onTrue(new InstantCommand(() -> shooter.setAmpPassingMode()));
     shooterSpeakerMode_X.onTrue(new InstantCommand(() -> shooter.setSpeakerMode()));
-    resetClimbSequence_LB.whileTrue(new InstantCommand(() -> climber.setZeroing(true)))
-      .onFalse(new InstantCommand(() -> climber.resetEncoders())
-      .andThen(new InstantCommand(() -> climber.setZeroing(false)))
-      .andThen(new InstantCommand(() -> climber.resetClimbSequence())));
-    nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
+    // resetClimbSequence_LB.whileTrue(new InstantCommand(() -> climber.setZeroing(true)))
+    //   .onFalse(new InstantCommand(() -> climber.resetEncoders())
+    //   .andThen(new InstantCommand(() -> climber.setZeroing(false)))
+    //   .andThen(new InstantCommand(() -> climber.resetClimbSequence())));
+    // nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
+
+    climberLower_LB.whileTrue(
+      new FunctionalCommand(() -> climber.setLoweringMode(),
+        () -> {},
+        interrupted -> climber.setStoppedMode(),
+        () -> climber.getOutputCurrent() > 40,
+        climber)
+    );
+
+    climberClimb_RB.onTrue(new InstantCommand(() -> climber.setClimbingMode(), climber))
+      .onFalse(new InstantCommand(() -> climber.setStoppedMode(), climber));
   }
 
   /**
@@ -184,7 +196,7 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new SwerveDrive());
     intake.setDefaultCommand(new IntakeHold());
     shooter.setDefaultCommand(new ShooterHold());
-    climber.setDefaultCommand(new ClimberHold());
+    // climber.setDefaultCommand(new ClimberHold());
     ampBar.setDefaultCommand(new AmpBarHold());
   }
 

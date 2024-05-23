@@ -21,17 +21,25 @@ public class Climber extends SubsystemBase {
   private static PearadoxSparkMax leftClimber;
   private static PearadoxSparkMax rightClimber;
 
-  private static SparkPIDController leftClimberController;
-  private static SparkPIDController rightClimberController;
-
-  private static RelativeEncoder leftClimberEncoder;
-  private static RelativeEncoder rightClimberEncoder;
-
   private static Climber climber = new Climber();
 
-  private double climberAdjust = 0;
-  private boolean zeroing = false;
+  // private static SparkPIDController leftClimberController;
+  // private static SparkPIDController rightClimberController;
+
+  // private static RelativeEncoder leftClimberEncoder;
+  // private static RelativeEncoder rightClimberEncoder;
+
+  // private double climberAdjust = 0;
+  // private boolean zeroing = false;
   private int climbSequenceStep = -1;
+
+  private final double CLIMB_POWER = 0.75;
+
+  private int _rampCounter = 0;   // as the motor ramps up to target speed, the current will spike - this counter will prevent the current limit from triggering too early
+  private boolean _atLimit = false;  // tracks whether the mechanism has reached the current threshold
+
+  private final int RAMPCYCLES = 20; // # of cycles to allow the motor to ramp up after an initial current spike
+  private final double STOPCURRENT = 15.0; // current at which to stop the motor (presumably has hit a physical stop)
 
   public static Climber getInstance(){
     return climber;
@@ -45,101 +53,107 @@ public class Climber extends SubsystemBase {
       ClimberConstants.CLIMBER_kP, ClimberConstants.CLIMBER_kI, ClimberConstants.CLIMBER_kD, 
       ClimberConstants.CLIMBER_MIN_OUTPUT, ClimberConstants.CLIMBER_MAX_OUTPUT);//TODO: Check for inversion
 
-    leftClimberController = leftClimber.getPIDController();
-    rightClimberController = rightClimber.getPIDController();
-    leftClimberEncoder = leftClimber.getEncoder();
-    rightClimberEncoder = rightClimber.getEncoder();
+    // leftClimberController = leftClimber.getPIDController();
+    // rightClimberController = rightClimber.getPIDController();
+    // leftClimberEncoder = leftClimber.getEncoder();
+    // rightClimberEncoder = rightClimber.getEncoder();
   }
 
   @Override
   public void periodic() {
-    SmarterDashboard.putNumber("Left Climber Position", getLeftPosition(), "Climber");
-    SmarterDashboard.putNumber("Right Climber Position", getRightPosition(), "Climber");
+    // SmarterDashboard.putNumber("Left Climber Position", getLeftPosition(), "Climber");
+    // SmarterDashboard.putNumber("Right Climber Position", getRightPosition(), "Climber");
     SmarterDashboard.putNumber("Left Climber Current", leftClimber.getOutputCurrent(), "Climber");
     SmarterDashboard.putNumber("Right Climber Current", rightClimber.getOutputCurrent(), "Climber");
-    SmarterDashboard.putNumber("Climb Sequence Step", climbSequenceStep, "Climber");
-    SmarterDashboard.putNumber("Climber Adjust", climberAdjust, "Climber");
+    // SmarterDashboard.putNumber("Climb Sequence Step", climbSequenceStep, "Climber");
+    // SmarterDashboard.putNumber("Climber Adjust", climberAdjust, "Climber");
 
-    if(RobotContainer.opController.getLeftTriggerAxis() > 0.95){
-      climberAdjust -= 0.05;
+    // if(RobotContainer.opController.getLeftTriggerAxis() > 0.95){
+    //   climberAdjust -= 0.05;
+    // }
+    // else if(RobotContainer.opController.getRightTriggerAxis() > 0.95){
+    //   climberAdjust += 0.05;
+    // }
+
+    double current = leftClimber.getOutputCurrent();
+    if(current > STOPCURRENT && _rampCounter > RAMPCYCLES) {
+      _atLimit = true;
+      SmarterDashboard.putString("AtLimit", "Yes", "Climber");
     }
-    else if(RobotContainer.opController.getRightTriggerAxis() > 0.95){
-      climberAdjust += 0.05;
-      
-    }
+    _rampCounter++;
+
+    SmarterDashboard.putNumber("RampCounter", (double)_rampCounter, "Climber");
   }
 
-  public void setClimberPosition(double reference){
-    leftClimberController.setReference(reference + climberAdjust, ControlType.kPosition, 0);
-    rightClimberController.setReference(reference + climberAdjust, ControlType.kPosition, 0);
-  }
+  // public void setClimberPosition(double reference){
+  //   leftClimberController.setReference(reference + climberAdjust, ControlType.kPosition, 0);
+  //   rightClimberController.setReference(reference + climberAdjust, ControlType.kPosition, 0);
+  // }
 
-  public void setZeroing(boolean zeroing){
-    this.zeroing = zeroing;
-  }
+  // public void setZeroing(boolean zeroing){
+  //   this.zeroing = zeroing;
+  // }
 
-  public void zeroClimber(){
-    leftClimber.set(-0.5);
-    rightClimber.set(-0.5);
-  }
+  // public void zeroClimber(){
+  //   leftClimber.set(-0.5);
+  //   rightClimber.set(-0.5);
+  // }
 
-  public void setCurrentLimit(int limit){
-    leftClimber.setSmartCurrentLimit(limit);
-    rightClimber.setSmartCurrentLimit(limit);
-  }
+  // public void resetEncoders(){
+  //   leftClimberEncoder.setPosition(0);
+  //   rightClimberEncoder.setPosition(0);
+  // }
 
-  public void resetEncoders(){
-    leftClimberEncoder.setPosition(0);
-    rightClimberEncoder.setPosition(0);
-  }
+  // public double getRightPosition(){
+  //   return rightClimberEncoder.getPosition();
+  // }
 
-  public double getRightPosition(){
-    return rightClimberEncoder.getPosition();
-  }
-
-  public double getLeftPosition(){
-    return leftClimberEncoder.getPosition();
-  }
+  // public double getLeftPosition(){
+  //   return leftClimberEncoder.getPosition();
+  // }
 
   public int getClimbSequenceStep(){
     return climbSequenceStep;
   }
 
-  public void resetClimbSequence(){
-    if(climbSequenceStep == 0){
-      climbSequenceStep = -1;
-    }
-    else{
-      climbSequenceStep = 0;
-    }
-  }
+  // public void resetClimbSequence(){
+  //   if(climbSequenceStep == 0){
+  //     climbSequenceStep = -1;
+  //   }
+  //   else{
+  //     climbSequenceStep = 0;
+  //   }
+  // }
 
-  public void nextClimbSequenceStep(){
-    climbSequenceStep++;
-  }
+  // public void nextClimbSequenceStep(){
+  //   climbSequenceStep++;
+  // }
 
-  public boolean getZeroing(){
-    return zeroing;
-  }
-
-  public void setClimbingMode() {
-    leftClimber.set(0.75);
-    rightClimber.set(0.75);
-  }
+  // public boolean getZeroing(){
+  //   return zeroing;
+  // }
 
   public void setStoppedMode() {
     leftClimber.stopMotor();
     rightClimber.stopMotor();
   }
 
-  public void setLoweringMode() {
-    leftClimber.set(-0.75);
-    rightClimber.set(-0.75);
+  public void setClimbingMode() {
+    SmarterDashboard.putString("AtLimit", "No", "Climber");
+
+    _rampCounter = 0;
+    _atLimit = false;
+    
+    leftClimber.set(-CLIMB_POWER);
+    rightClimber.set(-CLIMB_POWER);
   }
 
-  public double getOutputCurrent() {
-    double c1 = leftClimber.getOutputCurrent();
-    double c2 = rightClimber.getOutputCurrent();
-    return (c1 + c2) / 2.0;
+  public boolean isAtLimit() {
+    return _atLimit;
+  }
+
+  public void setLiftingMode() {
+    leftClimber.set(CLIMB_POWER);
+    rightClimber.set(CLIMB_POWER);
   }
 }

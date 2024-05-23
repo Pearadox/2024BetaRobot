@@ -63,7 +63,11 @@ public class ShooterKraken extends SubsystemBase {
   }
 
   public enum ShooterMode{
+<<<<<<< HEAD
     Auto, Manual, SourcePassing, AmpPassing, Speaker, Outtake
+=======
+    Auto, Manual, Passing, Speaker, Climbing
+>>>>>>> cf25216cfd98bf5472ad6a7c42be6b5ad4ef9a69
   }
 
   private ShooterMode shooterMode = ShooterMode.Auto;
@@ -168,9 +172,19 @@ public class ShooterKraken extends SubsystemBase {
     if(RobotContainer.climber.getClimbSequenceStep() >= 0){
       leftShooter.setControl(voltage_request.withOutput(0));
 
+<<<<<<< HEAD
       rightShooter.setControl(voltage_request.withOutput(0));
     }
     else if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){ //Amp
+=======
+    //   rightController.setReference(
+    //     0,
+    //     ControlType.kVoltage,
+    //     0);
+    // }
+
+    if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){ //Amp
+>>>>>>> cf25216cfd98bf5472ad6a7c42be6b5ad4ef9a69
       leftShooter.setControl(voltage_request.withOutput(ShooterConstants.AMP_VOLTAGE));
 
       rightShooter.setControl(voltage_request.withOutput(ShooterConstants.AMP_VOLTAGE));
@@ -200,6 +214,24 @@ public class ShooterKraken extends SubsystemBase {
 
       rightShooter.setControl(voltage_request.withOutput(rightShooterSpeedEntry.getDouble(4)));
     }
+<<<<<<< HEAD
+=======
+    else if(shooterMode == ShooterMode.Climbing){
+      leftShooter.stopMotor();
+      rightShooter.stopMotor();
+    }
+    // else if(debouncer.calculate(!hasPriorityTarget())){
+    //   leftController.setReference(
+    //     0,
+    //     ControlType.kVoltage,
+    //     0);
+
+    //   rightController.setReference(
+    //     0,
+    //     ControlType.kVoltage,
+    //     0);
+    // }
+>>>>>>> cf25216cfd98bf5472ad6a7c42be6b5ad4ef9a69
     else{
       leftShooter.setControl(voltage_request.withOutput(shooterVoltage));
 
@@ -249,6 +281,7 @@ public class ShooterKraken extends SubsystemBase {
 
       pivotPosition = ShooterConstants.SPEAKER_PIVOT_POSITION;
     }
+<<<<<<< HEAD
     else if(shooterMode == ShooterMode.Outtake){
       pivotController.setReference(
         11.5,
@@ -256,6 +289,13 @@ public class ShooterKraken extends SubsystemBase {
         0);
 
       pivotPosition = 11.5;
+=======
+    else if(shooterMode == ShooterMode.Climbing){
+      pivotController.setReference(
+        ShooterConstants.CLIMBING_PIVOT_POSITION,
+        ControlType.kPosition,
+        0);
+>>>>>>> cf25216cfd98bf5472ad6a7c42be6b5ad4ef9a69
     }
     else{
       if(shooterMode == ShooterMode.Auto){
@@ -385,8 +425,13 @@ public class ShooterKraken extends SubsystemBase {
     shooterMode = ShooterMode.Speaker;
   }
 
+<<<<<<< HEAD
   public void setOuttakeMode(){
     shooterMode = ShooterMode.Outtake;
+=======
+  public void setClimbingMode(){
+    shooterMode = ShooterMode.Climbing;
+>>>>>>> cf25216cfd98bf5472ad6a7c42be6b5ad4ef9a69
   }
 
   public boolean isRedAlliance(){

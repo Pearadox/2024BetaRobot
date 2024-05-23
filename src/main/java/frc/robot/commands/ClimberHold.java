@@ -22,6 +22,7 @@ public class ClimberHold extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+<<<<<<< HEAD
     if(climber.getZeroing()){
       climber.setCurrentLimit(12);
       climber.zeroClimber();
@@ -38,6 +39,22 @@ public class ClimberHold extends Command {
         climber.setClimberPosition(ClimberConstants.CLIMB_ROT);
       }
     }
+=======
+    // if(climber.getZeroing()){
+    //   climber.zeroClimber();
+    // }
+    // else{
+    //   if(climber.getClimbSequenceStep() <= -1){
+    //     climber.setClimberPosition(ClimberConstants.IDLE_ROT);
+    //   }
+    //   else if(climber.getClimbSequenceStep() == 0){
+    //     climber.setClimberPosition(ClimberConstants.MANTIS_ROT);
+    //   }
+    //   else if(climber.getClimbSequenceStep() >= 1){
+    //     climber.setClimberPosition(ClimberConstants.CLIMB_ROT);
+    //   }
+    // }
+>>>>>>> cf25216cfd98bf5472ad6a7c42be6b5ad4ef9a69
   }
 
   // Called once the command ends or is interrupted.
