@@ -19,26 +19,24 @@
 //   @Override
 //   public void initialize() {}
 
-//   // Called every time the scheduler runs while the command is scheduled.
-//   @Override
-//   public void execute() {
-//     if(climber.getZeroing()){
-//       climber.setCurrentLimit(12);
-//       climber.zeroClimber();
-//     }
-//     else{
-//       climber.setCurrentLimit(60);
-//       if(climber.getClimbSequenceStep() <= -1){
-//         climber.setClimberPosition(ClimberConstants.IDLE_ROT);
-//       }
-//       else if(climber.getClimbSequenceStep() == 0){
-//         climber.setClimberPosition(ClimberConstants.MANTIS_ROT);
-//       }
-//       else if(climber.getClimbSequenceStep() >= 1){
-//         climber.setClimberPosition(ClimberConstants.CLIMB_ROT);
-//       }
-//     }
-//   }
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    // if(climber.getZeroing()){
+    //   climber.zeroClimber();
+    // }
+    // else{
+    //   if(climber.getClimbSequenceStep() <= -1){
+    //     climber.setClimberPosition(ClimberConstants.IDLE_ROT);
+    //   }
+    //   else if(climber.getClimbSequenceStep() == 0){
+    //     climber.setClimberPosition(ClimberConstants.MANTIS_ROT);
+    //   }
+    //   else if(climber.getClimbSequenceStep() >= 1){
+    //     climber.setClimberPosition(ClimberConstants.CLIMB_ROT);
+    //   }
+    // }
+  }
 
 //   // Called once the command ends or is interrupted.
 //   @Override

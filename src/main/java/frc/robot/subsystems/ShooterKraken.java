@@ -63,7 +63,7 @@ public class ShooterKraken extends SubsystemBase {
   }
 
   public enum ShooterMode{
-    Auto, Manual, SourcePassing, AmpPassing, Speaker, Outtake
+    Auto, Manual, Passing, Speaker, Climbing
   }
 
   private ShooterMode shooterMode = ShooterMode.Auto;
@@ -168,9 +168,13 @@ public class ShooterKraken extends SubsystemBase {
     if(RobotContainer.climber.getClimbSequenceStep() >= 0){
       leftShooter.setControl(voltage_request.withOutput(0));
 
-      rightShooter.setControl(voltage_request.withOutput(0));
-    }
-    else if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){ //Amp
+    //   rightController.setReference(
+    //     0,
+    //     ControlType.kVoltage,
+    //     0);
+    // }
+
+    if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){ //Amp
       leftShooter.setControl(voltage_request.withOutput(ShooterConstants.AMP_VOLTAGE));
 
       rightShooter.setControl(voltage_request.withOutput(ShooterConstants.AMP_VOLTAGE));
@@ -200,6 +204,21 @@ public class ShooterKraken extends SubsystemBase {
 
       rightShooter.setControl(voltage_request.withOutput(rightShooterSpeedEntry.getDouble(4)));
     }
+    else if(shooterMode == ShooterMode.Climbing){
+      leftShooter.stopMotor();
+      rightShooter.stopMotor();
+    }
+    // else if(debouncer.calculate(!hasPriorityTarget())){
+    //   leftController.setReference(
+    //     0,
+    //     ControlType.kVoltage,
+    //     0);
+
+    //   rightController.setReference(
+    //     0,
+    //     ControlType.kVoltage,
+    //     0);
+    // }
     else{
       leftShooter.setControl(voltage_request.withOutput(shooterVoltage));
 
@@ -249,13 +268,11 @@ public class ShooterKraken extends SubsystemBase {
 
       pivotPosition = ShooterConstants.SPEAKER_PIVOT_POSITION;
     }
-    else if(shooterMode == ShooterMode.Outtake){
+    else if(shooterMode == ShooterMode.Climbing){
       pivotController.setReference(
-        11.5,
+        ShooterConstants.CLIMBING_PIVOT_POSITION,
         ControlType.kPosition,
         0);
-
-      pivotPosition = 11.5;
     }
     else{
       if(shooterMode == ShooterMode.Auto){
@@ -385,8 +402,8 @@ public class ShooterKraken extends SubsystemBase {
     shooterMode = ShooterMode.Speaker;
   }
 
-  public void setOuttakeMode(){
-    shooterMode = ShooterMode.Outtake;
+  public void setClimbingMode(){
+    shooterMode = ShooterMode.Climbing;
   }
 
   public boolean isRedAlliance(){
