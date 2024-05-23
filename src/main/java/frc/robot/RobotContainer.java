@@ -138,14 +138,6 @@ public class RobotContainer {
     //   .andThen(new InstantCommand(() -> climber.resetClimbSequence())));
     // nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
 
-    climberLower_LB.whileTrue(
-      new FunctionalCommand(() -> climber.setLoweringMode(),
-        () -> {},
-        interrupted -> climber.setStoppedMode(),
-        () -> climber.getOutputCurrent() > 40,
-        climber)
-    );
-
     climberClimb_RB.onTrue(new InstantCommand(() -> climber.setClimbingMode(), climber))
       .onFalse(new InstantCommand(() -> climber.setStoppedMode(), climber));
   }

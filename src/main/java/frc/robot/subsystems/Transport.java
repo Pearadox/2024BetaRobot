@@ -72,11 +72,7 @@ public class Transport extends SubsystemBase {
   }
 
   public void transportHold(){
-<<<<<<< HEAD
     transportMotor.set(0.35);
-=======
-    transportMotor.set(0.4);
->>>>>>> cf25216cfd98bf5472ad6a7c42be6b5ad4ef9a69
   }
 
   public void transportOut(){
