@@ -49,20 +49,28 @@ public class PoseEstimation {
         backends = new LimelightBackend[2];
         backendToggles = new boolean[2];
 
-        backends[0] = new LimelightBackend(VisionConstants.SHOOTER_LL_NAME);
-        backends[1] = new LimelightBackend(VisionConstants.INTAKE_LL_NAME);
+        backends[0] = new LimelightBackend(VisionConstants.SHOOTER_LL_NAME, true);
+        backends[1] = new LimelightBackend(VisionConstants.INTAKE_LL_NAME, true);
         backendToggles[0] = true;
-        backendToggles[1] = true;
+        backendToggles[1] = false;
     }
 
     public void periodic() {
+        boolean rejectUpdate = false;
+
+        drivetrain.setRobotOrientation(VisionConstants.SHOOTER_LL_NAME, poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+
+        if(Math.abs(drivetrain.getAngularSpeed()) > 720){
+            rejectUpdate = true;
+        }
+        
         for (int i = 0; i < backends.length; i++) {
             if (backendToggles[i]) {
                 // this is a hack to get around an issue in `SwerveDrivePoseEstimator`
                 // where two measurements cannot share the same timestamp
                 double timestampOffset = 1e-9 * i;
                 
-                if(backends[i].isValid()){
+                if(backends[i].isValid() && !rejectUpdate){
                     backends[i].getMeasurement().map((measurement) -> {
                         measurement.timestamp += timestampOffset;
                         return measurement;

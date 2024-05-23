@@ -3,7 +3,7 @@
   "startingPose": {
     "position": {
       "x": 1.45,
-      "y": 5.55
+      "y": 7.33
     },
     "rotation": 0
   },
@@ -12,39 +12,27 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Set Shooter Auto"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.75
+            "pathName": "A_4_Blue"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "Note Align"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "M_2_4_5N"
+            "pathName": "A_4_R_Blue"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Stop Modules"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "M_4_R_5N"
           }
         },
         {
@@ -62,19 +50,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "M_4-5_5N"
+            "pathName": "A_5_Blue"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Note Align"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A_5_R_Blue"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Stop Modules"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "M_5_R_5N"
           }
         },
         {
@@ -92,19 +86,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "M_5-6_5N"
+            "pathName": "A_6_Blue"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Note Align"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A_6_R_Blue"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Stop Modules"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "M_6_R_5N"
           }
         },
         {

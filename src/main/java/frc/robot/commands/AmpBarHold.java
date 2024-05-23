@@ -29,26 +29,15 @@ public class AmpBarHold extends Command {
   public void execute() {
     ampBar.ampBarHold();
 
-    if(climber.getClimbSequenceStep() == -1){
-      if(RobotContainer.driverController.getRawButton(XboxController.Button.kA.value)){
-        ampBar.setDefenseMode();
-      }
-      else if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95 && (ampBar.getAmpBarMode() == AmpBarMode.Stowed || ampBar.getAmpBarMode() == AmpBarMode.Defense)){
-        ampBar.setDeployedMode();
-      }
-      else if (RobotContainer.driverController.getLeftTriggerAxis() < 0.95 && ampBar.getAmpBarMode() == AmpBarMode.Deployed){
-        ampBar.setStowedMode();
-      }
+    if(RobotContainer.driverController.getRawButton(XboxController.Button.kA.value)){
+      ampBar.setDefenseMode();
     }
-    // else if(climber.getClimbSequenceStep() >= 0 && climber.getClimbSequenceStep() <= 1){
-    //   ampBar.setClimbMode();
-    // }
-    // else if(climber.getClimbSequenceStep() >= 2){
-    //   ampBar.setTrapMode();
-    // }
-    // else if(climber.getClimbSequenceStep() > 3){
-    //   ampBar.setClimbMode(); //needs to be all the way 0
-    // }
+    else if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95 && (ampBar.getAmpBarMode() == AmpBarMode.Stowed || ampBar.getAmpBarMode() == AmpBarMode.Defense)){
+      ampBar.setDeployedMode();
+    }
+    else if (RobotContainer.driverController.getLeftTriggerAxis() < 0.95 && ampBar.getAmpBarMode() == AmpBarMode.Deployed){
+      ampBar.setStowedMode();
+    }
   }
 
   // Called once the command ends or is interrupted.

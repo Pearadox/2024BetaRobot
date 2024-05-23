@@ -32,4 +32,16 @@ public class PearadoxTalonFX extends TalonFX{
 
         this.getConfigurator().apply(currentLimitsConfigs);
     }
+
+    public void setCurrentLimit(double limit){
+        CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs();
+        currentLimitsConfigs.withSupplyCurrentLimitEnable(true);
+        currentLimitsConfigs.withSupplyCurrentLimit(limit);
+        currentLimitsConfigs.withSupplyTimeThreshold(limit);
+        currentLimitsConfigs.withSupplyTimeThreshold(1);
+        currentLimitsConfigs.withStatorCurrentLimitEnable(true);
+        currentLimitsConfigs.withStatorCurrentLimit(limit);
+
+        this.getConfigurator().apply(currentLimitsConfigs);
+    }
 }

@@ -23,9 +23,11 @@ public class ClimberHold extends Command {
   @Override
   public void execute() {
     if(climber.getZeroing()){
+      climber.setCurrentLimit(12);
       climber.zeroClimber();
     }
     else{
+      climber.setCurrentLimit(60);
       if(climber.getClimbSequenceStep() <= -1){
         climber.setClimberPosition(ClimberConstants.IDLE_ROT);
       }

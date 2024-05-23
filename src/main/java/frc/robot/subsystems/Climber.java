@@ -38,10 +38,10 @@ public class Climber extends SubsystemBase {
   }
 
   public Climber() {
-    leftClimber = new PearadoxSparkMax(ClimberConstants.LEFT_CLIMBER_ID, MotorType.kBrushless, IdleMode.kBrake, 90, true,
+    leftClimber = new PearadoxSparkMax(ClimberConstants.LEFT_CLIMBER_ID, MotorType.kBrushless, IdleMode.kBrake, 60, true,
       ClimberConstants.CLIMBER_kP, ClimberConstants.CLIMBER_kI, ClimberConstants.CLIMBER_kD, 
       ClimberConstants.CLIMBER_MIN_OUTPUT, ClimberConstants.CLIMBER_MAX_OUTPUT);//TODO: Check for inversion
-    rightClimber = new PearadoxSparkMax(ClimberConstants.RIGHT_CLIMBER_ID, MotorType.kBrushless, IdleMode.kBrake, 90, false,
+    rightClimber = new PearadoxSparkMax(ClimberConstants.RIGHT_CLIMBER_ID, MotorType.kBrushless, IdleMode.kBrake, 60, false,
       ClimberConstants.CLIMBER_kP, ClimberConstants.CLIMBER_kI, ClimberConstants.CLIMBER_kD, 
       ClimberConstants.CLIMBER_MIN_OUTPUT, ClimberConstants.CLIMBER_MAX_OUTPUT);//TODO: Check for inversion
 
@@ -81,6 +81,11 @@ public class Climber extends SubsystemBase {
   public void zeroClimber(){
     leftClimber.set(-0.5);
     rightClimber.set(-0.5);
+  }
+
+  public void setCurrentLimit(int limit){
+    leftClimber.setSmartCurrentLimit(limit);
+    rightClimber.setSmartCurrentLimit(limit);
   }
 
   public void resetEncoders(){

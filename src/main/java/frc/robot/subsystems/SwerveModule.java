@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -26,6 +28,14 @@ public class SwerveModule extends SubsystemBase {
 
   private double absoluteEncoderOffset;
 
+  private StatusSignal<Double> drivePosition;
+  private StatusSignal<Double> driveVelocity;
+  private StatusSignal<Double> turnPosition;
+  private StatusSignal<Double> turnVelocity;
+  private StatusSignal<Double> absoluteEncoderAngle;
+  private StatusSignal<Double> driveCurrent;
+  private StatusSignal<Double> turnCurrent;
+
   private Rotation2d lastAngle;
 
   private DutyCycleOut driveMotorRequest = new DutyCycleOut(0.0);
@@ -43,6 +53,18 @@ public class SwerveModule extends SubsystemBase {
 
       turnPIDController = new PIDController(SwerveConstants.KP_TURNING, 0, 0);
       turnPIDController.enableContinuousInput(-Math.PI, Math.PI);
+
+      drivePosition = driveMotor.getPosition();
+      driveVelocity = driveMotor.getVelocity();
+      turnPosition = turnMotor.getPosition();
+      turnVelocity = turnMotor.getVelocity();
+      absoluteEncoderAngle = absoluteEncoder.getAbsolutePosition();
+      driveCurrent = driveMotor.getStatorCurrent();
+      turnCurrent = turnMotor.getStatorCurrent();
+
+      BaseStatusSignal.setUpdateFrequencyForAll(50, drivePosition, driveVelocity, turnPosition, turnVelocity, absoluteEncoderAngle, driveCurrent, turnCurrent);
+      driveMotor.optimizeBusUtilization();
+      turnMotor.optimizeBusUtilization();
 
       resetEncoders();
       lastAngle = getState().angle;

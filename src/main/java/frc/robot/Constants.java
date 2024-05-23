@@ -135,13 +135,13 @@ public final class Constants {
     public static final double PIVOT_MIN_OUTPUT = -0.85;
     public static final double PIVOT_MAX_OUTPUT = 0.85;
 
-    public static final double AMP_PIVOT_POSITION = 26; //TODO: Pivot positions for amp passing speaker
+    public static final double AMP_PIVOT_POSITION = 27.3; //TODO: Pivot positions for amp passing speaker
     public static final double PASSING_PIVOT_POSITION = 29.5;
     public static final double SPEAKER_PIVOT_POSITION = 32.4;
     public static final double TRAP_PIVOT_POSITION = 58;
     public static final double FLOOR_TO_SHOOTER = Units.inchesToMeters(7); //TODO: floor to shooter length
 
-    public static final double PASSING_VOLTAGE = 6.2;
+    public static final double PASSING_VOLTAGE = 6.4;
     public static final double AMP_VOLTAGE = 4;
     public static final double SPEAKER_VOLTAGE = 5.5;
     public static final double TRAP_VOLTAGE = 4.3;
@@ -161,7 +161,7 @@ public final class Constants {
 
     public static final double MANTIS_ROT = 0;
     public static final double IDLE_ROT = 40;
-    public static final double CLIMB_ROT = 75; //127.5
+    public static final double CLIMB_ROT = 90; //127.5
 
     public static final double CLIMBER_kP = 0.15;
     public static final double CLIMBER_kI = 0;
@@ -181,8 +181,8 @@ public final class Constants {
     public static final double AMP_BAR_MIN_OUTPUT = -0.5;
     public static final double AMP_BAR_MAX_OUTPUT = 0.5;
 
-    public static final double STOWED_ROT = -20.2; 
-    public static final double DEPLOYED_ROT = -0.7;
+    public static final double STOWED_ROT = -19.1; 
+    public static final double DEPLOYED_ROT = -1.0;
     public static final double TRAP_ROT = -4.7;
     public static final double CLIMB_ROT = -3;
     public static final double DEFENSE_ROT = -6.7;
@@ -200,6 +200,8 @@ public final class Constants {
     public static final String INTAKE_LL_NAME = "limelight-intake";
 
     public static final Vector<N3> LIMELIGHT_STD_DEV = VecBuilder.fill(.7, .7, .9999999);
+    public static final Vector<N3> MEGATAG2_LIMELIGHT_STD_DEV = VecBuilder.fill(.7, .7, .9999999);
+
     
     public static final double AMBIGUITY_FILTER = 0.3;
     public static final double DISTANCE_FILTER = FieldConstants.FIELD_LENGTH / 2;

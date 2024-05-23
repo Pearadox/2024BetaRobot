@@ -17,21 +17,31 @@ import java.util.Optional;
 public class LimelightBackend extends VisionBackend {
     private String llName;
 
+    private boolean megaTag2;
+
     private final DoubleArraySubscriber botPose;
+    private final DoubleArraySubscriber botPose2;
     private final DoubleSubscriber cl;
     private final DoubleSubscriber tl;
 
-    public LimelightBackend(String llName) {
+    public LimelightBackend(String llName, boolean megaTag2) {
         this.llName = llName;
+        this.megaTag2 = megaTag2;
 
         botPose =  NetworkTableInstance.getDefault().getTable(llName).getDoubleArrayTopic("botpose_wpiblue").subscribe(null);
+        botPose2 =  NetworkTableInstance.getDefault().getTable(llName).getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(null);
         cl = NetworkTableInstance.getDefault().getTable(llName).getDoubleTopic("cl").subscribe(0);
         tl = NetworkTableInstance.getDefault().getTable(llName).getDoubleTopic("tl").subscribe(0);
     }
 
     @Override
     public Optional<VisionBackend.Measurement> getMeasurement() {
-        TimestampedDoubleArray[] updates = botPose.readQueue();
+        TimestampedDoubleArray[] updates;
+        if(megaTag2){
+            updates = botPose.readQueue();
+        }else{
+            updates = botPose2.readQueue();
+        }
 
         if (updates.length == 0) {
             return Optional.empty();
@@ -63,10 +73,10 @@ public class LimelightBackend extends VisionBackend {
     }
 
     public boolean isValid(){
-        double[] botpose_wpiblue = NetworkTableInstance.getDefault().getTable(llName).getEntry("botpose_wpiblue").getDoubleArray(new double[11]);
+        double[] botpose_orb_wpiblue = NetworkTableInstance.getDefault().getTable(llName).getEntry("botpose_orb_wpiblue").getDoubleArray(new double[11]);
 
-        double tagCount = botpose_wpiblue[7];
-        double avgDist = botpose_wpiblue[9];
+        double tagCount = botpose_orb_wpiblue[7];
+        double avgDist = botpose_orb_wpiblue[9];
 
         return tagCount > 0 && avgDist < 4.5;
     }

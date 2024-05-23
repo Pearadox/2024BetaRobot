@@ -2,25 +2,103 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.5,
-      "y": 6.28
+      "x": 1.43,
+      "y": 1.55
     },
-    "rotation": 0
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 1.0
+            "name": "Set Shooter Auto"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "A_5"
+            "pathName": "S_8_Red"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Note Align"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S_8_R_Red"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Modules"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Source Auto Align"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S_7_Red"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Note Align"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S_7_R_Red"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Modules"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Source Auto Align"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S_6_Red"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Note Align"
           }
         },
         {
@@ -32,7 +110,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "A_5_R"
+            "pathName": "S_6_R_Red"
           }
         },
         {
@@ -42,69 +120,15 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "A_5-4"
+            "name": "Auto Align"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Stop Modules"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "A_4_R"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stop Modules"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "A_4-3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stop Modules"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "A_3-2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stop Modules"
+            "name": "Shoot"
           }
         }
       ]

@@ -33,13 +33,43 @@ public class SwerveDrive extends Command {
   @Override
   public void execute() {
     if(drivetrain.getDriveMode() == Drivetrain.DriveMode.Align){
-      if(shooter.getShooterMode() == ShooterMode.Passing){
+      if(shooter.getShooterMode() == ShooterMode.SourcePassing){
         if(drivetrain.isRedAlliance()){
-          drivetrain.turnToHeading(45, new Translation2d());
+          drivetrain.swerveDrive(
+            -driverController.getLeftY(), 
+            -driverController.getLeftX(), 
+            -1,
+            1,
+            true,
+            new Translation2d(),
+            true,
+            true,
+            true);
         }
         else{
-          drivetrain.turnToHeading(-30, new Translation2d());
+          drivetrain.swerveDrive(
+            -driverController.getLeftY(), 
+            -driverController.getLeftX(), 
+            0.5,
+            0.866,
+            true,
+            new Translation2d(),
+            true,
+            true,
+            true);
         }
+      }
+      else if(shooter.getShooterMode() == ShooterMode.AmpPassing){
+        drivetrain.swerveDrive(
+            -driverController.getLeftY(), 
+            -driverController.getLeftX(), 
+            0,
+            1,
+            true,
+            new Translation2d(),
+            true,
+            true,
+            true);
       }
       else{
         drivetrain.swerveDrive(

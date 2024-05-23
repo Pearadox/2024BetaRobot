@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
@@ -62,7 +63,7 @@ public class ShooterKraken extends SubsystemBase {
   }
 
   public enum ShooterMode{
-    Auto, Manual, Passing, Speaker
+    Auto, Manual, SourcePassing, AmpPassing, Speaker, Outtake
   }
 
   private ShooterMode shooterMode = ShooterMode.Auto;
@@ -99,34 +100,34 @@ public class ShooterKraken extends SubsystemBase {
     pivotLerp.addPoint(27.7, 17.46);
     pivotLerp.addPoint(25.5, 16.55);
     pivotLerp.addPoint(24, 15.3);
-    pivotLerp.addPoint(22.4, 14.7); //10ft
-    pivotLerp.addPoint(21.4, 14.0);
-    pivotLerp.addPoint(20.3, 13.7);
-    pivotLerp.addPoint(19.1, 13.1);
-    pivotLerp.addPoint(18.3, 11.7);
-    pivotLerp.addPoint(17.4, 11.2); //15ft
-    pivotLerp.addPoint(16.4, 10.4);
-    pivotLerp.addPoint(15.9, 9.9);
-    pivotLerp.addPoint(15.35, 9.5);
-    pivotLerp.addPoint(14.9, 9.2);
-    pivotLerp.addPoint(14, 8.9);  //20ft
-    pivotLerp.addPoint(13.5, 8.3);
+    pivotLerp.addPoint(22.4, 14.2); //10ft // WCMP: Subtracted 0.5 from this point
+    pivotLerp.addPoint(21.4, 13.5);
+    pivotLerp.addPoint(20.3, 12.7); // WCMP: Subtracted 1.0 from this point and some points below
+    pivotLerp.addPoint(19.1, 12.1); 
+    pivotLerp.addPoint(18.3, 11.65); //WCMP: Subtracted 0.05 from this point and some points below
+    pivotLerp.addPoint(17.4, 11.15); //15ft
+    pivotLerp.addPoint(16.4, 10.35);
+    pivotLerp.addPoint(15.9, 9.65);
+    pivotLerp.addPoint(15.35, 9.45);
+    pivotLerp.addPoint(14.9, 9.15);
+    pivotLerp.addPoint(14, 8.75);  //20ft
+    pivotLerp.addPoint(13.5, 8.3); //WCMP: No more changes here and below
     pivotLerp.addPoint(13, 7.9);
     pivotLerp.addPoint(12.6, 7.7);
     pivotLerp.addPoint(12, 7.4);
-    pivotLerp.addPoint(11.5, 7.0); //25ft
+    pivotLerp.addPoint(11.5, 7.15); //25ft
 
-    shooterLerp.addPoint(53, 7);
-    shooterLerp.addPoint(47, 7);
-    shooterLerp.addPoint(41, 7.2);
-    shooterLerp.addPoint(35, 7.5);
-    shooterLerp.addPoint(29, 7.75);
-    shooterLerp.addPoint(23, 8);
-    shooterLerp.addPoint(18, 8.25);
-    shooterLerp.addPoint(17, 9.25);
-    shooterLerp.addPoint(15, 9.25);
-    shooterLerp.addPoint(13, 9.75);
-    shooterLerp.addPoint(11.5, 10.25);
+    shooterLerp.addPoint(53, 8);
+    shooterLerp.addPoint(47, 8);
+    shooterLerp.addPoint(41, 8.2);
+    shooterLerp.addPoint(35, 8.5);
+    shooterLerp.addPoint(29, 8.75);
+    shooterLerp.addPoint(23, 9);
+    shooterLerp.addPoint(18, 9.25);
+    shooterLerp.addPoint(17, 9.5);
+    shooterLerp.addPoint(15, 9.75);
+    shooterLerp.addPoint(13, 10.25);
+    shooterLerp.addPoint(11.5, 10.75);
 
     driverTab = Shuffleboard.getTab("Driver");
     leftShooterSpeedEntry = driverTab.add("Left Shooter Speed", 7)
@@ -142,23 +143,19 @@ public class ShooterKraken extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmarterDashboard.putString("Shooter Mode", getShooterMode().toString(), "Shooter");
-    // SmarterDashboard.putNumber("Shooter Left Speed", leftEncoder.getVelocity(), "Shooter");
-    // SmarterDashboard.putNumber("Shooter Right Speed", rightEncoder.getVelocity(), "Shooter");
     SmarterDashboard.putNumber("Shooter Pivot Position", pivotEncoder.getPosition(), "Shooter");
     SmarterDashboard.putNumber("Shooter Pivot Intended Position", pivotPosition, "Shooter");
     SmarterDashboard.putNumber("Shooter Pivot Current", pivot.getOutputCurrent(), "Shooter");
     SmarterDashboard.putNumber("Shooter Pivot Intended Angle", calculatePivotAngle(), "Shooter");  
     SmarterDashboard.putBoolean("Shooter Has Priority Target", hasPriorityTarget(), "Shooter"); 
     SmarterDashboard.putNumber("Shooter Pivot Adjust", pivotAdjust, "Shooter");
-    // SmarterDashboard.putNumber("Note Velocity", getNoteVelocity(), "Shooter");
-    // SmarterDashboard.putNumber("Shooter Left Temperature", leftShooter.getMotorTemperature(), "Shooter");
-    // SmarterDashboard.putNumber("Shooter Right Temperature", rightShooter.getMotorTemperature(), "Shooter");
+    SmarterDashboard.putNumber("Left Shooter Speed", leftShooter.getVelocity().getValueAsDouble() * 60.0, "Shooter");
+    SmarterDashboard.putNumber("Right Shooter Speed", rightShooter.getVelocity().getValueAsDouble() * 60.0, "Shooter");
     SmarterDashboard.putNumber("Right Shooter Stator Current", rightShooter.getStatorCurrent().getValueAsDouble(), "Shooter");
     SmarterDashboard.putNumber("Left Shooter Stator Current", leftShooter.getStatorCurrent().getValueAsDouble(), "Shooter");
     SmarterDashboard.putNumber("Right Shooter Supply Current", rightShooter.getSupplyCurrent().getValueAsDouble(), "Shooter");
     SmarterDashboard.putNumber("Left Shooter Supply Current", leftShooter.getSupplyCurrent().getValueAsDouble(), "Shooter");
 
-    
     shooterModeEntry.setString(shooterMode.toString());
     pivotAdjustEntry.setDouble(pivotAdjust);
     hasPriorityTargetEntry.setBoolean(hasPriorityTarget());
@@ -168,49 +165,41 @@ public class ShooterKraken extends SubsystemBase {
     double shooterVoltage = shooterLerp.interpolate(calculatePivotAngle());
     SmarterDashboard.putNumber("Shooter Auto Voltage", shooterVoltage, "Shooter");
 
-    // if(RobotContainer.climber.getClimbSequenceStep() >= 0){
-    //   leftController.setReference(
-    //     0,
-    //     ControlType.kVoltage,
-    //     0);
+    if(RobotContainer.climber.getClimbSequenceStep() >= 0){
+      leftShooter.setControl(voltage_request.withOutput(0));
 
-    //   rightController.setReference(
-    //     0,
-    //     ControlType.kVoltage,
-    //     0);
-    // }
-    
-    if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){ //Amp
+      rightShooter.setControl(voltage_request.withOutput(0));
+    }
+    else if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){ //Amp
       leftShooter.setControl(voltage_request.withOutput(ShooterConstants.AMP_VOLTAGE));
 
       rightShooter.setControl(voltage_request.withOutput(ShooterConstants.AMP_VOLTAGE));
     }
-    else if(shooterMode == ShooterMode.Passing){
+    else if(shooterMode == ShooterMode.SourcePassing){
       leftShooter.setControl(voltage_request.withOutput(ShooterConstants.PASSING_VOLTAGE));
 
       rightShooter.setControl(voltage_request.withOutput(ShooterConstants.PASSING_VOLTAGE - ShooterConstants.LEFT_TO_RIGHT_VOLTAGE_OFFSET));
+    }
+    else if(shooterMode == ShooterMode.AmpPassing){
+      leftShooter.setControl(voltage_request.withOutput(ShooterConstants.PASSING_VOLTAGE - 1));
+
+      rightShooter.setControl(voltage_request.withOutput(ShooterConstants.PASSING_VOLTAGE - ShooterConstants.LEFT_TO_RIGHT_VOLTAGE_OFFSET - 1));
     }
     else if(shooterMode == ShooterMode.Speaker){
       leftShooter.setControl(voltage_request.withOutput(ShooterConstants.SPEAKER_VOLTAGE));
 
       rightShooter.setControl(voltage_request.withOutput(ShooterConstants.SPEAKER_VOLTAGE - ShooterConstants.LEFT_TO_RIGHT_VOLTAGE_OFFSET));
     }
+    else if(shooterMode == ShooterMode.Outtake){
+      leftShooter.setControl(voltage_request.withOutput(2.3));
+
+      rightShooter.setControl(voltage_request.withOutput(2.3));
+    }
     else if(shooterMode == ShooterMode.Manual){
       leftShooter.setControl(voltage_request.withOutput(leftShooterSpeedEntry.getDouble(7)));
 
       rightShooter.setControl(voltage_request.withOutput(rightShooterSpeedEntry.getDouble(4)));
     }
-    // else if(debouncer.calculate(!hasPriorityTarget())){
-    //   leftController.setReference(
-    //     0,
-    //     ControlType.kVoltage,
-    //     0);
-
-    //   rightController.setReference(
-    //     0,
-    //     ControlType.kVoltage,
-    //     0);
-    // }
     else{
       leftShooter.setControl(voltage_request.withOutput(shooterVoltage));
 
@@ -228,22 +217,14 @@ public class ShooterKraken extends SubsystemBase {
     if(zeroing){
       pivot.set(-0.075);
     }
-    // else if(RobotContainer.climber.getClimbSequenceStep() >= 0){
-    //   pivotController.setReference(
-    //     5,
-    //     ControlType.kPosition,
-    //     0);
+    else if(RobotContainer.climber.getClimbSequenceStep() >= 0){
+      pivotController.setReference(
+        2,
+        ControlType.kPosition,
+        0);
 
-    //   pivotPosition = 5;
-    // }
-    // else if(RobotContainer.climber.getClimbSequenceStep() >= 2){
-    //   pivotController.setReference(
-    //     ShooterConstants.TRAP_PIVOT_POSITION,
-    //     ControlType.kPosition,
-    //     0);
-
-    //   pivotPosition = ShooterConstants.TRAP_PIVOT_POSITION;
-    // }
+      pivotPosition = 2;
+    }
     else if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){
       pivotController.setReference(
         ShooterConstants.AMP_PIVOT_POSITION,
@@ -252,7 +233,7 @@ public class ShooterKraken extends SubsystemBase {
 
       pivotPosition = ShooterConstants.AMP_PIVOT_POSITION;
     }
-    else if(shooterMode == ShooterMode.Passing){
+    else if(shooterMode == ShooterMode.SourcePassing || shooterMode == ShooterMode.AmpPassing){
       pivotController.setReference(
         ShooterConstants.PASSING_PIVOT_POSITION,
         ControlType.kPosition,
@@ -268,8 +249,16 @@ public class ShooterKraken extends SubsystemBase {
 
       pivotPosition = ShooterConstants.SPEAKER_PIVOT_POSITION;
     }
+    else if(shooterMode == ShooterMode.Outtake){
+      pivotController.setReference(
+        11.5,
+        ControlType.kPosition,
+        0);
+
+      pivotPosition = 11.5;
+    }
     else{
-      if(shooterMode == ShooterMode.Auto && hasPriorityTarget()){
+      if(shooterMode == ShooterMode.Auto){
         setPivotAngle(calculatePivotAngle());
       }
 
@@ -317,12 +306,22 @@ public class ShooterKraken extends SubsystemBase {
   }
 
   public double calculatePivotAngle(){
+    double x, z;
+
     if(hasPriorityTarget()){
       botpose_targetspace = llTable.getEntry("botpose_targetspace").getDoubleArray(new double[6]);
+      
+      x = Math.abs(botpose_targetspace[0]);
+      z = Math.abs(botpose_targetspace[2]) + 0.07;
     }
+    else{
+      int tagID = isRedAlliance() ? 4 : 7;
+      Pose2d tagPose = RobotContainer.aprilTagFieldLayout.getTagPose(tagID).get().toPose2d();
+      Pose2d robotPose = RobotContainer.poseEstimation.getEstimatedPose();
 
-    double x = Math.abs(botpose_targetspace[0]) + (isRedAlliance() ? 0.05 : 0); //Red Aliance Offset
-    double z = Math.abs(botpose_targetspace[2]);
+      z = tagPose.getX() - robotPose.getX() + 0.07;
+      x = (tagPose.getY() - 0.11) - robotPose.getY();
+    }
 
     double hypot = Math.hypot(x, z);
 
@@ -331,9 +330,7 @@ public class ShooterKraken extends SubsystemBase {
   }
 
   public void setPivotAngle(double angle){
-    if(hasPriorityTarget()){
-      pivotPosition = pivotLerp.interpolate(angle);
-    }
+    pivotPosition = pivotLerp.interpolate(angle);
   }
 
   public void setPivotPosition(){
@@ -376,12 +373,20 @@ public class ShooterKraken extends SubsystemBase {
     shooterMode = ShooterMode.Manual;
   }
 
-  public void setPassingMode(){
-    shooterMode = ShooterMode.Passing;
+  public void setSourcePassingMode(){
+    shooterMode = ShooterMode.SourcePassing;
+  }
+
+  public void setAmpPassingMode(){
+    shooterMode = ShooterMode.AmpPassing;
   }
 
   public void setSpeakerMode(){
     shooterMode = ShooterMode.Speaker;
+  }
+
+  public void setOuttakeMode(){
+    shooterMode = ShooterMode.Outtake;
   }
 
   public boolean isRedAlliance(){
@@ -394,5 +399,10 @@ public class ShooterKraken extends SubsystemBase {
 
   public boolean readyToShoot() {
     return (Math.abs(pivotPosition + pivotAdjust - pivotEncoder.getPosition()) <= 0.9);
+  }
+
+  public void setCurrentLimit(double limit){
+    leftShooter.setCurrentLimit(limit);
+    rightShooter.setCurrentLimit(limit);
   }
 }

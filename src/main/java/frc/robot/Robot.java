@@ -89,6 +89,7 @@ public class Robot extends LoggedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    RobotContainer.poseEstimation.periodic();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -109,6 +110,7 @@ public class Robot extends LoggedRobot {
     shooter.setBrakeMode(true);
     transport.setBrakeMode(true);
     drivetrain.changeIntakePipeline(1);
+    shooter.setCurrentLimit(65);
 
     if(drivetrain.isRedAlliance()){
       llTable.getEntry("priorityid").setNumber(4);
@@ -141,6 +143,8 @@ public class Robot extends LoggedRobot {
     drivetrain.setAllIdleMode(true);
     shooter.setBrakeMode(true);
     transport.setBrakeMode(true);
+    drivetrain.changeIntakePipeline(1);
+    shooter.setCurrentLimit(50);
 
     if(drivetrain.isRedAlliance()){
       llTable.getEntry("priorityid").setNumber(4);
@@ -152,9 +156,7 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-    RobotContainer.poseEstimation.periodic();
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void testInit() {

@@ -16,13 +16,13 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.lib.drivers.PearadoxSparkMax;
+import frc.lib.drivers.PearadoxSparkFlex;
 import frc.lib.util.SmarterDashboard;
 import frc.robot.Constants.TransportConstants;
 import frc.robot.RobotContainer;
 
 public class Transport extends SubsystemBase {
-  private PearadoxSparkMax transportMotor;
+  private PearadoxSparkFlex transportMotor;
 
   private DigitalInput irSensor;
   private Debouncer debouncer;
@@ -38,7 +38,7 @@ public class Transport extends SubsystemBase {
 
   /** Creates a new Transport. */
   public Transport() {
-    transportMotor = new PearadoxSparkMax(TransportConstants.TRANSPORT_ID, MotorType.kBrushless, IdleMode.kBrake, 60, false);
+    transportMotor = new PearadoxSparkFlex(TransportConstants.TRANSPORT_ID, MotorType.kBrushless, IdleMode.kBrake, 60, false);
 
     irSensor = new DigitalInput(TransportConstants.IR_SENSOR_CHANNEL);
     debouncer = new Debouncer(0.2, DebounceType.kFalling);
@@ -72,11 +72,11 @@ public class Transport extends SubsystemBase {
   }
 
   public void transportHold(){
-    transportMotor.set(0.3);
+    transportMotor.set(0.35);
   }
 
   public void transportOut(){
-    transportMotor.set(-0.5);
+    transportMotor.set(-0.4);
   }
 
   public void transportStop(){
@@ -105,8 +105,10 @@ public class Transport extends SubsystemBase {
   }
 
   public Command rumbleController(){
-    return new InstantCommand(() -> RobotContainer.driverController.setRumble(RumbleType.kBothRumble, 0.5))
+    return new InstantCommand(() -> RobotContainer.driverController.setRumble(RumbleType.kBothRumble, 0.75))
+      .andThen(new InstantCommand(() -> RobotContainer.opController.setRumble(RumbleType.kBothRumble, 0.75)))
       .andThen(new WaitCommand(0.75))
-      .andThen(new InstantCommand(() -> RobotContainer.driverController.setRumble(RumbleType.kBothRumble, 0)));
+      .andThen(new InstantCommand(() -> RobotContainer.driverController.setRumble(RumbleType.kBothRumble, 0)))
+      .andThen(new InstantCommand(() -> RobotContainer.opController.setRumble(RumbleType.kBothRumble, 0)));
   }
 }
