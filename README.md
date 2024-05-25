@@ -1,3 +1,27 @@
-checkout
+﻿# 2024BetaRobot
+ FRC Team 5414's code for the 2024 competition robot for Crescendo ⭕, Checkout 🛒. The code is written in Java and uses WPILib's Java command-based structure.
+ 
+## Code Highlights
+- Field-Centric Swerve Drive
+  
+  The robot's drivetrain is a [standard swerve drivetrain with field-centric control](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/Drivetrain.java) using double Kraken X60 modules. The drivetrain uses encoders, a Pigeon 2 gyro, and odometry to control movement during the autonomous and teleoperated phases. The rotation of the drivetrain can be controlled either through [speed](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/Drivetrain.java#L186) or [heading](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/Drivetrain.java#L215).
 
-Pearadox's beta iteration for our competition robot 
+- Note Shooter Flywheels and Pivot, Transport System, Arm Bar Pivot, Climbing Sequence
+
+  The robot uses WPILib subsystems and enums to effectively create a state machine that controls each mechanism. The robot features a [note shooter](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/ShooterKraken.java) that uses dynamic voltage control to change shooting speeds using velocity PID control, and positional PID control for the shooter pivot; both relying on [LerpTables](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/ShooterKraken.java#L93) based off of [intended angle](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/ShooterKraken.java#L308) of the pivot calculated from the distance from to the speaker. The [transport](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/Transport.java) system to bring the note from the [intake](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/Intake.java) to the shooter uses a beam break sensor to detect if the note is in the shooter using a [debouncer](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/Transport.java#L100). The [amp bar](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/AmpBar.java) uses positional PID control for each setpoint, as does the [climber](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/Climber.java), which also controlled through a [climbing sequence](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/commands/ClimberHold.java) that triggers various commands in step-wise function for ease of usability.
+
+- Autonomous Path Following
+
+  The robot uses [Team 3015's PathPlanner](https://github.com/mjansen4857/pathplanner), a motion profile generator for FRC robots, to generate and follow autonomous trajectories. Autonomous routines are created using PathPlanner's built-in [AutoBuilder](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/Drivetrain.java#L134) and declaring [NamedCommands](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/RobotContainer.java#L159) with the PathPlanner application, and selected through sendable choosers in SmartDashboard.
+
+- Speaker and Note Alignment/Limelight Vision
+  
+  The robot uses [Limelight's Vision Software](https://limelightvision.io/) to manage two mounted Limelight cameras that provide real-time positional data (Pose) of the robot based on field elements with [Team 3636 General's](https://github.com/frc3636) [vision backend code](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/lib/drivers/vision/LimelightBackend.java) modified to support multiple cameras and [MegaTag2](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/lib/drivers/vision/LimelightBackend.java#L32). Speaker Alignment when shooting a note relies on either aligning to a [specific AprilTag](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/Drivetrain.java#L439) using "tx" values, or using [3D localization](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/Drivetrain.java#L598) to align to a specific Pose, dependant on the [visibility](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/Drivetrain.java#L436) of the AprilTag. Note Alignment uses a TFLite machine learning model, trained with [Dataset Colab's](https://datasetcolab.com/) database, on the Limelight software, and [aligns](https://github.com/Pearadox/2024BetaRobot/blob/main/src/main/java/frc/robot/subsystems/Drivetrain.java#L492) using "tx" values. All types of alignment use a PIDController with different values for constants.
+
+- AdvantageKit & AdvantageScope
+
+  The robot uses [AdvantageKit](https://github.com/Mechanical-Advantage/AdvantageKit) and [AdvantageScope](https://github.com/Mechanical-Advantage/AdvantageScope) made by [6328 Mechanical Advantage](https://github.com/Mechanical-Advantage) to log useful information about the robot for debugging purposes.
+
+## Variable Naming Conventions
+- XXX_XXX (i.e. `WHEEL_DIAMETER`): All [constants](https://github.com/Pearadox/2023CompetitionBot/blob/main/src/main/java/frc/robot/Constants.java) (screaming snake case)
+- xxXxxXxx (i.e. `autoStartingSideChooser`): All private instance variables (camel case)
