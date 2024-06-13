@@ -19,9 +19,9 @@
 //   @Override
 //   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
+  // // Called every time the scheduler runs while the command is scheduled.
+  // @Override
+  // public void execute() {
     // if(climber.getZeroing()){
     //   climber.zeroClimber();
     // }
@@ -36,7 +36,7 @@
     //     climber.setClimberPosition(ClimberConstants.CLIMB_ROT);
     //   }
     // }
-  }
+  
 
 //   // Called once the command ends or is interrupted.
 //   @Override

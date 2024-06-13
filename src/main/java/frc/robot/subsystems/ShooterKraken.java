@@ -63,8 +63,8 @@ public class ShooterKraken extends SubsystemBase {
   }
 
   public enum ShooterMode{
-    Auto, Manual, Passing, Speaker, Climbing
-  }
+    Auto, Manual, Passing, Speaker, Climbing, Outtake
+  , AmpPassing, SourcePassing}
 
   private ShooterMode shooterMode = ShooterMode.Auto;
 
@@ -161,6 +161,9 @@ public class ShooterKraken extends SubsystemBase {
     hasPriorityTargetEntry.setBoolean(hasPriorityTarget());
   }
 
+  /**
+   * 
+   */
   public void shooterHold(){
     double shooterVoltage = shooterLerp.interpolate(calculatePivotAngle());
     SmarterDashboard.putNumber("Shooter Auto Voltage", shooterVoltage, "Shooter");
@@ -224,6 +227,7 @@ public class ShooterKraken extends SubsystemBase {
 
       rightShooter.setControl(voltage_request.withOutput(shooterVoltage - ShooterConstants.LEFT_TO_RIGHT_VOLTAGE_OFFSET));
     }
+  }
   }
 
   public void setShooterAuto(double speed){
@@ -405,6 +409,8 @@ public class ShooterKraken extends SubsystemBase {
   public void setClimbingMode(){
     shooterMode = ShooterMode.Climbing;
   }
+
+  // public void set
 
   public boolean isRedAlliance(){
     var alliance = DriverStation.getAlliance();

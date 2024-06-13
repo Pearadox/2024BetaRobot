@@ -127,13 +127,6 @@ public class RobotContainer {
     // nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
 
     climberPrepare_LB.onTrue(new InstantCommand(() -> shooter.setClimbingMode(), shooter));
-    climberPrepare_LB.whileTrue(new FunctionalCommand(() -> climber.setClimbingMode(),
-        () -> {},
-        interrupted -> climber.setStoppedMode(),
-        () -> climber.isAtLimit(),
-        climber)
-      );
-    climberPrepare_LB.onFalse(new InstantCommand(() -> climber.setStoppedMode()));
 
     //Functionally, this should be the same as the one immediately above - both still do not stop the hooks going up
     // climberPrepare_LB.onTrue(new ClimberPrepare())
@@ -172,7 +165,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Set Shooter Auto", new InstantCommand(() -> shooter.setShooterAuto(0.85)));
     NamedCommands.registerCommand("Reset Heading", new InstantCommand(drivetrain::zeroHeading, drivetrain));
     NamedCommands.registerCommand("Source Set Pivot Position", new InstantCommand(() -> shooter.setPivotPosition(11.5)));
-    NamedCommands.registerCommand("Set Shooter Outtake", new InstantCommand(() -> shooter.setOuttakeMode()));
+    NamedCommands.registerCommand("Set Shooter Outtake", new InstantCommand(() -> shooter.setAutoMode()));
     NamedCommands.registerCommand("Turn Forward", new RunCommand(() -> drivetrain.turnToHeading(0, new Translation2d())).until(() -> Math.abs(drivetrain.getHeading()) < 1));
     NamedCommands.registerCommand("Turn to Angle 5", new RunCommand(() -> drivetrain.turnToHeading(5, new Translation2d())).until(() -> Math.abs(drivetrain.getHeading() - 5) < 1));
     NamedCommands.registerCommand("Note Align", new RunCommand(() -> drivetrain.swerveDrive(
