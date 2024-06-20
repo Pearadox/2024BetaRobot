@@ -165,12 +165,12 @@ public class ShooterKraken extends SubsystemBase {
     double shooterVoltage = shooterLerp.interpolate(calculatePivotAngle());
     SmarterDashboard.putNumber("Shooter Auto Voltage", shooterVoltage, "Shooter");
 
-    if(RobotContainer.climber.getClimbSequenceStep() >= 0){
-      leftShooter.setControl(voltage_request.withOutput(0));
+    // if(RobotContainer.climber.getClimbSequenceStep() >= 0){
+    //   leftShooter.setControl(voltage_request.withOutput(0));
 
-      rightShooter.setControl(voltage_request.withOutput(0));
-    }
-    else if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){ //Amp
+    //   rightShooter.setControl(voltage_request.withOutput(0));
+    // }
+    if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){ //Amp
       leftShooter.setControl(voltage_request.withOutput(ShooterConstants.AMP_VOLTAGE));
 
       rightShooter.setControl(voltage_request.withOutput(ShooterConstants.AMP_VOLTAGE));
@@ -217,14 +217,14 @@ public class ShooterKraken extends SubsystemBase {
     if(zeroing){
       pivot.set(-0.075);
     }
-    else if(RobotContainer.climber.getClimbSequenceStep() >= 0){
-      pivotController.setReference(
-        2,
-        ControlType.kPosition,
-        0);
+    // else if(RobotContainer.climber.getClimbSequenceStep() >= 0){
+    //   pivotController.setReference(
+    //     2,
+    //     ControlType.kPosition,
+    //     0);
 
-      pivotPosition = 2;
-    }
+    //   pivotPosition = 2;
+    // }
     else if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){
       pivotController.setReference(
         ShooterConstants.AMP_PIVOT_POSITION,

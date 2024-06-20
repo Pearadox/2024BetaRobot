@@ -52,7 +52,7 @@ public class RobotContainer {
   public static final Drivetrain drivetrain = Drivetrain.getInstance();
   public static final Intake intake = Intake.getInstance();
   public static final Transport transport = Transport.getInstance();
-  public static final Climber climber = Climber.getInstance();
+  // public static final Climber climber = Climber.getInstance();
   public static final AmpBar ampBar = AmpBar.getInstance();
   public static final ShooterKraken shooter = ShooterKraken.getInstance();
 
@@ -131,11 +131,11 @@ public class RobotContainer {
     shooterSourcePassingMode_Y.onTrue(new InstantCommand(() -> shooter.setSourcePassingMode()));
     shooterAmpPassingMode_Start.onTrue(new InstantCommand(() -> shooter.setAmpPassingMode()));
     shooterSpeakerMode_X.onTrue(new InstantCommand(() -> shooter.setSpeakerMode()));
-    resetClimbSequence_LB.whileTrue(new InstantCommand(() -> climber.setZeroing(true)))
-      .onFalse(new InstantCommand(() -> climber.resetEncoders())
-      .andThen(new InstantCommand(() -> climber.setZeroing(false)))
-      .andThen(new InstantCommand(() -> climber.resetClimbSequence())));
-    nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
+    // resetClimbSequence_LB.whileTrue(new InstantCommand(() -> climber.setZeroing(true)))
+    //   .onFalse(new InstantCommand(() -> climber.resetEncoders())
+    //   .andThen(new InstantCommand(() -> climber.setZeroing(false)))
+    //   .andThen(new InstantCommand(() -> climber.resetClimbSequence())));
+    // nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
   }
 
   /**
@@ -184,7 +184,7 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new SwerveDrive());
     intake.setDefaultCommand(new IntakeHold());
     shooter.setDefaultCommand(new ShooterHold());
-    climber.setDefaultCommand(new ClimberHold());
+    // climber.setDefaultCommand(new ClimberHold());
     ampBar.setDefaultCommand(new AmpBarHold());
   }
 
