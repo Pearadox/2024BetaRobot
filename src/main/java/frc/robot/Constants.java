@@ -76,7 +76,7 @@ public final class Constants {
         new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2),
         new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2),
         new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2)
-    );
+    ); //TODO: Determine the values
 
     //Teleop constraints
     public static final double TELE_DRIVE_MAX_SPEED = DRIVETRAIN_MAX_SPEED;
@@ -139,7 +139,6 @@ public final class Constants {
     public static final double PASSING_PIVOT_POSITION = 29.5;
     public static final double SPEAKER_PIVOT_POSITION = 32.4;
     public static final double TRAP_PIVOT_POSITION = 58;
-    public static final double CLIMBING_PIVOT_POSITION = 1;
     public static final double FLOOR_TO_SHOOTER = Units.inchesToMeters(7); //TODO: floor to shooter length
 
     public static final double PASSING_VOLTAGE = 6.4;

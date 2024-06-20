@@ -63,8 +63,8 @@ public class ShooterKraken extends SubsystemBase {
   }
 
   public enum ShooterMode{
-    Auto, Manual, Passing, Speaker, Climbing, Outtake
-  , AmpPassing, SourcePassing}
+    Auto, Manual, SourcePassing, AmpPassing, Speaker, Outtake
+  }
 
   private ShooterMode shooterMode = ShooterMode.Auto;
 
@@ -161,9 +161,6 @@ public class ShooterKraken extends SubsystemBase {
     hasPriorityTargetEntry.setBoolean(hasPriorityTarget());
   }
 
-  /**
-   * 
-   */
   public void shooterHold(){
     double shooterVoltage = shooterLerp.interpolate(calculatePivotAngle());
     SmarterDashboard.putNumber("Shooter Auto Voltage", shooterVoltage, "Shooter");
@@ -171,13 +168,9 @@ public class ShooterKraken extends SubsystemBase {
     if(RobotContainer.climber.getClimbSequenceStep() >= 0){
       leftShooter.setControl(voltage_request.withOutput(0));
 
-    //   rightController.setReference(
-    //     0,
-    //     ControlType.kVoltage,
-    //     0);
-    // }
-
-    if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){ //Amp
+      rightShooter.setControl(voltage_request.withOutput(0));
+    }
+    else if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){ //Amp
       leftShooter.setControl(voltage_request.withOutput(ShooterConstants.AMP_VOLTAGE));
 
       rightShooter.setControl(voltage_request.withOutput(ShooterConstants.AMP_VOLTAGE));
@@ -207,27 +200,11 @@ public class ShooterKraken extends SubsystemBase {
 
       rightShooter.setControl(voltage_request.withOutput(rightShooterSpeedEntry.getDouble(4)));
     }
-    else if(shooterMode == ShooterMode.Climbing){
-      leftShooter.stopMotor();
-      rightShooter.stopMotor();
-    }
-    // else if(debouncer.calculate(!hasPriorityTarget())){
-    //   leftController.setReference(
-    //     0,
-    //     ControlType.kVoltage,
-    //     0);
-
-    //   rightController.setReference(
-    //     0,
-    //     ControlType.kVoltage,
-    //     0);
-    // }
     else{
       leftShooter.setControl(voltage_request.withOutput(shooterVoltage));
 
       rightShooter.setControl(voltage_request.withOutput(shooterVoltage - ShooterConstants.LEFT_TO_RIGHT_VOLTAGE_OFFSET));
     }
-  }
   }
 
   public void setShooterAuto(double speed){
@@ -272,11 +249,13 @@ public class ShooterKraken extends SubsystemBase {
 
       pivotPosition = ShooterConstants.SPEAKER_PIVOT_POSITION;
     }
-    else if(shooterMode == ShooterMode.Climbing){
+    else if(shooterMode == ShooterMode.Outtake){
       pivotController.setReference(
-        ShooterConstants.CLIMBING_PIVOT_POSITION,
+        11.5,
         ControlType.kPosition,
         0);
+
+      pivotPosition = 11.5;
     }
     else{
       if(shooterMode == ShooterMode.Auto){
@@ -406,11 +385,9 @@ public class ShooterKraken extends SubsystemBase {
     shooterMode = ShooterMode.Speaker;
   }
 
-  public void setClimbingMode(){
-    shooterMode = ShooterMode.Climbing;
+  public void setOuttakeMode(){
+    shooterMode = ShooterMode.Outtake;
   }
-
-  // public void set
 
   public boolean isRedAlliance(){
     var alliance = DriverStation.getAlliance();

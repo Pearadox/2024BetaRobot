@@ -25,8 +25,21 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.drivers.vision.PoseEstimation;
 import frc.robot.Constants.IOConstants;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+import frc.robot.commands.AmpBarHold;
+import frc.robot.commands.AutoAlign;
+import frc.robot.commands.ClimberHold;
+import frc.robot.commands.IntakeHold;
+import frc.robot.commands.Outtake;
+import frc.robot.commands.Shoot;
+import frc.robot.commands.ShooterHold;
+import frc.robot.commands.SourceAutoAlign;
+import frc.robot.commands.SwerveDrive;
+import frc.robot.subsystems.AmpBar;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.ShooterKraken;
+import frc.robot.subsystems.Transport;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -63,10 +76,8 @@ public class RobotContainer {
   private final JoystickButton shooterAmpPassingMode_Start = new JoystickButton(opController, XboxController.Button.kStart.value);
   private final JoystickButton shooterManualMode_B = new JoystickButton(opController, XboxController.Button.kB.value);
   private final JoystickButton shooterSpeakerMode_X = new JoystickButton(opController, XboxController.Button.kX.value);
-  // private final JoystickButton resetClimbSequence_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
-  // private final JoystickButton nextClimbSequenceStep_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
-  private final JoystickButton climberPrepare_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
-  private final JoystickButton climberLift_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
+  private final JoystickButton resetClimbSequence_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton nextClimbSequenceStep_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
 
   //Pose Estimation
   public static final PoseEstimation poseEstimation = new PoseEstimation();
@@ -120,20 +131,11 @@ public class RobotContainer {
     shooterSourcePassingMode_Y.onTrue(new InstantCommand(() -> shooter.setSourcePassingMode()));
     shooterAmpPassingMode_Start.onTrue(new InstantCommand(() -> shooter.setAmpPassingMode()));
     shooterSpeakerMode_X.onTrue(new InstantCommand(() -> shooter.setSpeakerMode()));
-    // resetClimbSequence_LB.whileTrue(new InstantCommand(() -> climber.setZeroing(true)))
-    //   .onFalse(new InstantCommand(() -> climber.resetEncoders())
-    //   .andThen(new InstantCommand(() -> climber.setZeroing(false)))
-    //   .andThen(new InstantCommand(() -> climber.resetClimbSequence())));
-    // nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
-
-    climberPrepare_LB.onTrue(new InstantCommand(() -> shooter.setClimbingMode(), shooter));
-
-    //Functionally, this should be the same as the one immediately above - both still do not stop the hooks going up
-    // climberPrepare_LB.onTrue(new ClimberPrepare())
-    //   .onFalse(new InstantCommand(() -> climber.setStoppedMode(), climber));
-
-    climberLift_RB.onTrue(new InstantCommand(() -> climber.setLiftingMode(), climber))
-      .onFalse(new InstantCommand(() -> climber.setStoppedMode(), climber));
+    resetClimbSequence_LB.whileTrue(new InstantCommand(() -> climber.setZeroing(true)))
+      .onFalse(new InstantCommand(() -> climber.resetEncoders())
+      .andThen(new InstantCommand(() -> climber.setZeroing(false)))
+      .andThen(new InstantCommand(() -> climber.resetClimbSequence())));
+    nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
   }
 
   /**
@@ -165,7 +167,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Set Shooter Auto", new InstantCommand(() -> shooter.setShooterAuto(0.85)));
     NamedCommands.registerCommand("Reset Heading", new InstantCommand(drivetrain::zeroHeading, drivetrain));
     NamedCommands.registerCommand("Source Set Pivot Position", new InstantCommand(() -> shooter.setPivotPosition(11.5)));
-    NamedCommands.registerCommand("Set Shooter Outtake", new InstantCommand(() -> shooter.setAutoMode()));
+    NamedCommands.registerCommand("Set Shooter Outtake", new InstantCommand(() -> shooter.setOuttakeMode()));
     NamedCommands.registerCommand("Turn Forward", new RunCommand(() -> drivetrain.turnToHeading(0, new Translation2d())).until(() -> Math.abs(drivetrain.getHeading()) < 1));
     NamedCommands.registerCommand("Turn to Angle 5", new RunCommand(() -> drivetrain.turnToHeading(5, new Translation2d())).until(() -> Math.abs(drivetrain.getHeading() - 5) < 1));
     NamedCommands.registerCommand("Note Align", new RunCommand(() -> drivetrain.swerveDrive(
@@ -182,8 +184,8 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new SwerveDrive());
     intake.setDefaultCommand(new IntakeHold());
     shooter.setDefaultCommand(new ShooterHold());
+    climber.setDefaultCommand(new ClimberHold());
     ampBar.setDefaultCommand(new AmpBarHold());
-    // climber.setDefaultCommand(new ClimberHold());
   }
 
   private void configureAutoTab() {
