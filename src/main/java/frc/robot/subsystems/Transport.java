@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.units.Time;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,6 +30,8 @@ public class Transport extends SubsystemBase {
 
   private boolean isHolding = true;
   private boolean rumbled = false;
+
+  private long requestedShootTime = 0;
 
   private static final Transport transport = new Transport();
 
@@ -84,7 +87,13 @@ public class Transport extends SubsystemBase {
   }
 
   public void transportShoot(){
+    requestedShootTime = System.currentTimeMillis();
     transportMotor.set(1);
+  }
+
+  public long getRequestedShootTime(){
+    SmarterDashboard.putNumber("Requested Shoot Time", requestedShootTime, "Transport");
+    return requestedShootTime;
   }
 
   public void setBrakeMode(boolean brake){

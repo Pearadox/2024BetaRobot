@@ -40,6 +40,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.ShooterKraken;
 import frc.robot.subsystems.Transport;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -118,6 +119,7 @@ public class RobotContainer {
       .onFalse(new InstantCommand(() -> shooter.setZeroing(false))
       .andThen(new InstantCommand(() -> shooter.resetPivotEncoder())));
     shoot_RB.whileTrue(new Shoot());
+
     outtake_B.whileTrue(new Outtake());
     turnToApril_LB.onTrue(new InstantCommand(() -> drivetrain.setAlignMode()))
       .onFalse(new InstantCommand(() -> drivetrain.setNormalMode()));

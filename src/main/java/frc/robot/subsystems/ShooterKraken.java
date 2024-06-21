@@ -52,6 +52,7 @@ public class ShooterKraken extends SubsystemBase {
   private double pivotAdjust = 0;
   private double[] botpose_targetspace = new double[6];
   public static final Drivetrain drivetrain = Drivetrain.getInstance();
+  public static final Transport transport = Transport.getInstance();
 
   private LerpTable pivotLerp = new LerpTable();
   private LerpTable shooterLerp = new LerpTable();
@@ -170,6 +171,20 @@ public class ShooterKraken extends SubsystemBase {
 
     //   rightShooter.setControl(voltage_request.withOutput(0));
     // }
+
+    //If we don't have a note loaded, we can set the left and right shooters to 0 voltage
+    //If a shot is requested, the hasNote will turn false and the shooter won't shoot as effectively
+    //We need to keep the shooter running for .1 seconds after the transport kicks up to the shooter
+    //We can do this by setting a variable with the current time when the transport wants to shoot 
+    //and then if we don't have a note loaded and the time a shoot requested is less than .1 seconds, we keep the shooter running
+    if(!transport.hasNote() && 
+     (System.currentTimeMillis() > (transport.getRequestedShootTime() + 0.1)))
+    {
+      leftShooter.setControl(voltage_request.withOutput(0));
+      rightShooter.setControl(voltage_request.withOutput(0));
+      return;
+    }
+
     if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){ //Amp
       leftShooter.setControl(voltage_request.withOutput(ShooterConstants.AMP_VOLTAGE));
 
