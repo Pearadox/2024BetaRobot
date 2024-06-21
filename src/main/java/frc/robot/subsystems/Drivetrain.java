@@ -21,11 +21,17 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -165,6 +171,34 @@ public class Drivetrain extends SubsystemBase {
     SmarterDashboard.putData("Left Back Module State", leftBack.getState(), "Drivetrain");
     SmarterDashboard.putData("Right Back Module State", rightBack.getState(), "Drivetrain");
     SmarterDashboard.putData("Odometry", getPose(), "Drivetrain");
+
+    //elastic
+    SmartDashboard.putData("Swerve Drive", new Sendable() {
+      @Override
+      public void initSendable(SendableBuilder builder){
+        builder.setSmartDashboardType("Swerve Drive");
+        builder.addDoubleProperty("Front Left Angle", () -> leftFront.getState().angle.getDegrees(), null);
+        builder.addDoubleProperty("Front Left Velocity", () -> leftFront.getDriveMotorVelocity(), null);
+
+        builder.addDoubleProperty("Front Right Angle", () -> rightFront.getState().angle.getDegrees(), null);
+        builder.addDoubleProperty("Front Right Velocity", () -> rightFront.getDriveMotorVelocity(), null);
+
+        builder.addDoubleProperty("Back Left Angle", () -> leftBack.getState().angle.getDegrees(), null);
+        builder.addDoubleProperty("Back Left Velocity", () -> leftBack.getDriveMotorVelocity(), null);
+
+        builder.addDoubleProperty("Back Right Angle", () -> rightBack.getState().angle.getDegrees(), null);
+        builder.addDoubleProperty("Back Right Velocity", () -> rightBack.getDriveMotorVelocity(), null);
+
+        builder.addDoubleProperty("Robot Angle", () -> getHeading(), null);
+      }
+    });
+    SmartDashboard.putData("Field", new Field2d() {{ setRobotPose(getPose()); }});
+    SmartDashboard.putData("Align PID", alignPIDController);
+    SmartDashboard.putData("Note Align PID", noteAlignPIDController);
+    SmartDashboard.putData("Power Distribution", new PowerDistribution());
+    SmarterDashboard.putNumber("Match Time", DriverStation.getMatchTime(), "Misc"); 
+    SmarterDashboard.putBoolean("Joystick Connection", DriverStation.isJoystickConnected(0) && DriverStation.isJoystickConnected(1), "Misc"); 
+    SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
     leftFrontStateEntry.setString(leftFront.getState().toString());
     rightFrontStateEntry.setString(rightFront.getState().toString());
