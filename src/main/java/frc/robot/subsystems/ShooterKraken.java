@@ -68,6 +68,8 @@ public class ShooterKraken extends SubsystemBase {
 
   private ShooterMode shooterMode = ShooterMode.Auto;
 
+  private Transport transport = Transport.getInstance();
+
   public static ShuffleboardTab driverTab;
   private GenericEntry leftShooterSpeedEntry;
   private GenericEntry rightShooterSpeedEntry;
@@ -170,7 +172,11 @@ public class ShooterKraken extends SubsystemBase {
 
     //   rightShooter.setControl(voltage_request.withOutput(0));
     // }
-    if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){ //Amp
+    if ((!transport.hasNote() && (((System.currentTimeMillis()) - transport.getRequestedShootTime()) > 100))) {
+      leftShooter.setControl(voltage_request.withOutput(0));
+      rightShooter.setControl(voltage_request.withOutput(0));
+    }
+    else if(RobotContainer.driverController.getLeftTriggerAxis() >= 0.95){ //Amp
       leftShooter.setControl(voltage_request.withOutput(ShooterConstants.AMP_VOLTAGE));
 
       rightShooter.setControl(voltage_request.withOutput(ShooterConstants.AMP_VOLTAGE));

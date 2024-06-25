@@ -30,6 +30,8 @@ public class Transport extends SubsystemBase {
   private boolean isHolding = true;
   private boolean rumbled = false;
 
+  private long shootTime = 0;
+
   private static final Transport transport = new Transport();
 
   public static Transport getInstance(){
@@ -83,7 +85,8 @@ public class Transport extends SubsystemBase {
     transportMotor.set(0);
   }
 
-  public void transportShoot(){
+  public void transportShoot(){    
+    shootTime = System.currentTimeMillis();
     transportMotor.set(1);
   }
 
@@ -98,6 +101,10 @@ public class Transport extends SubsystemBase {
 
   public boolean hasNote(){
     return debouncer.calculate(!irSensor.get());
+  }
+
+  public long getRequestedShootTime(){
+    return shootTime;
   }
 
   public void setHolding(boolean isHolding){
