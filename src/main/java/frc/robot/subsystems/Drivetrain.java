@@ -5,9 +5,11 @@
 package frc.robot.subsystems;
 
 import java.text.DecimalFormat;
+import java.util.Optional;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -75,6 +77,8 @@ public class Drivetrain extends SubsystemBase {
   private GenericEntry angularSpeedEntry;
 
   private static final Drivetrain DRIVETRAIN = new Drivetrain();
+
+  public static final Intake intake = Intake.getInstance();
 
   /* 
   *<p> 
@@ -146,6 +150,8 @@ public class Drivetrain extends SubsystemBase {
       () -> isRedAlliance(),
       this);
 
+    PPHolonomicDriveController.setRotationTargetOverride(this::getRotationTargetOverride);
+
     lastHeading = getHeading();
 
     leftFrontStateEntry = swerveTab.add("Left Front Module State", leftFront.getState().toString()).withSize(4, 1).withPosition(0, 0).getEntry();
@@ -173,29 +179,28 @@ public class Drivetrain extends SubsystemBase {
     SmarterDashboard.putData("Odometry", getPose(), "Drivetrain");
 
     //elastic
-    SmartDashboard.putData("Swerve Drive", new Sendable() {
-      @Override
-      public void initSendable(SendableBuilder builder){
-        builder.setSmartDashboardType("Swerve Drive");
-        builder.addDoubleProperty("Front Left Angle", () -> leftFront.getState().angle.getDegrees(), null);
-        builder.addDoubleProperty("Front Left Velocity", () -> leftFront.getDriveMotorVelocity(), null);
+    // SmartDashboard.putData("Swerve Drive", new Sendable() {
+    //   @Override
+    //   public void initSendable(SendableBuilder builder){
+    //     builder.setSmartDashboardType("Swerve Drive");
+    //     builder.addDoubleProperty("Front Left Angle", () -> leftFront.getState().angle.getDegrees(), null);
+    //     builder.addDoubleProperty("Front Left Velocity", () -> leftFront.getDriveMotorVelocity(), null);
 
-        builder.addDoubleProperty("Front Right Angle", () -> rightFront.getState().angle.getDegrees(), null);
-        builder.addDoubleProperty("Front Right Velocity", () -> rightFront.getDriveMotorVelocity(), null);
+    //     builder.addDoubleProperty("Front Right Angle", () -> rightFront.getState().angle.getDegrees(), null);
+    //     builder.addDoubleProperty("Front Right Velocity", () -> rightFront.getDriveMotorVelocity(), null);
 
-        builder.addDoubleProperty("Back Left Angle", () -> leftBack.getState().angle.getDegrees(), null);
-        builder.addDoubleProperty("Back Left Velocity", () -> leftBack.getDriveMotorVelocity(), null);
+    //     builder.addDoubleProperty("Back Left Angle", () -> leftBack.getState().angle.getDegrees(), null);
+    //     builder.addDoubleProperty("Back Left Velocity", () -> leftBack.getDriveMotorVelocity(), null);
 
-        builder.addDoubleProperty("Back Right Angle", () -> rightBack.getState().angle.getDegrees(), null);
-        builder.addDoubleProperty("Back Right Velocity", () -> rightBack.getDriveMotorVelocity(), null);
+    //     builder.addDoubleProperty("Back Right Angle", () -> rightBack.getState().angle.getDegrees(), null);
+    //     builder.addDoubleProperty("Back Right Velocity", () -> rightBack.getDriveMotorVelocity(), null);
 
-        builder.addDoubleProperty("Robot Angle", () -> getHeading(), null);
-      }
-    });
-    SmartDashboard.putData("Field", new Field2d() {{ setRobotPose(getPose()); }});
+    //     builder.addDoubleProperty("Robot Angle", () -> getHeading(), null);
+    //   }
+    // });
+    // SmartDashboard.putData("Field", new Field2d() {{ setRobotPose(getPose()); }});
     SmartDashboard.putData("Align PID", alignPIDController);
     SmartDashboard.putData("Note Align PID", noteAlignPIDController);
-    SmartDashboard.putData("Power Distribution", new PowerDistribution());
     SmarterDashboard.putNumber("Match Time", DriverStation.getMatchTime(), "Misc"); 
     SmarterDashboard.putBoolean("Joystick Connection", DriverStation.isJoystickConnected(0) && DriverStation.isJoystickConnected(1), "Misc"); 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
@@ -677,10 +682,57 @@ public class Drivetrain extends SubsystemBase {
     return Math.hypot(Math.abs(deltaX), Math.abs(deltaY)) > 8 ? Math.hypot(Math.abs(deltaX), Math.abs(deltaY)) : 8;
   }
 
+  public Pose2d getTargetPose(){
+    double y_error = -intakellTable.getEntry("ty").getDouble(0);
+    double x_error = intakellTable.getEntry("tx").getDouble(0);
+    double dist = VisionConstants.INTAKE_TO_FLOOR / Math.tan(y_error);
+    double x, y;
+
+    //Heading control probably doesnt work
+    if(!isRedAlliance()){
+      x_error += 180;
+      if(x_error > 180){
+        x_error -= 360;
+      }
+    }
+
+    double error = x_error - getHeading();
+
+    if(error > 180) {
+       error -= 360;
+    }
+    else if(error < -180){
+       error += 360;
+    }
+
+    if(error > 0) {
+      x = Math.sin(x_error) * dist;
+      y = Math.cos(y_error) * dist;
+    }else{
+      x = -(Math.sin(x_error) * dist);
+      y = Math.cos(y_error) * dist;
+    }
+
+    x = getPose().getX() + Math.signum(x) * x;
+    y = getPose().getY() + y;
+
+    return new Pose2d(x, y,
+     new Rotation2d(0));
+  }
+
   
   public void changeIntakePipeline(int pipeline){
     intakellTable.getEntry("pipeline").setNumber(pipeline);
   }
+
+  public Optional<Rotation2d> getRotationTargetOverride(){
+    if(intake.hasTarget()) {
+        double error = intakellTable.getEntry("tx").getDouble(0);
+        return Optional.of(new Rotation2d(getPose().getRotation().getDegrees() + error));
+    } else {
+        return Optional.empty();
+    }
+}
 
   public DriveMode getDriveMode(){
     return driveMode;

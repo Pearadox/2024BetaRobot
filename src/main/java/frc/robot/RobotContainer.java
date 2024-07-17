@@ -8,10 +8,12 @@ import java.io.IOException;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -178,6 +180,11 @@ public class RobotContainer {
       new Translation2d(),
       true))
       .withTimeout(0.55));
+    NamedCommands.registerCommand("Note Align Pose", AutoBuilder.pathfindToPose(
+      drivetrain.getTargetPose(),
+      new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
+      0,
+      0));
   }
 
   public void setDefaultCommands(){
