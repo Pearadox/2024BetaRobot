@@ -78,8 +78,8 @@ public final class Constants {
         new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2)
     ); //TODO: Determine the values
 
-    //Teleop constraints
-    public static final double TELE_DRIVE_MAX_SPEED = DRIVETRAIN_MAX_SPEED;
+    //Teleop constraints  
+    public static final double TELE_DRIVE_MAX_SPEED = DRIVETRAIN_MAX_SPEED / 2;
     public static final double TELE_DRIVE_MAX_ANGULAR_SPEED = DRIVETRAIN_MAX_ANGULAR_SPEED / 1.25;
     public static final double TELE_DRIVE_MAX_ACCELERATION = 3;
     public static final double TELE_DRIVE_MAX_ANGULAR_ACCELERATION = 3;

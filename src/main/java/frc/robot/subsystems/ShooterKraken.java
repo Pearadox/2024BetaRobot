@@ -201,9 +201,9 @@ public class ShooterKraken extends SubsystemBase {
       rightShooter.setControl(voltage_request.withOutput(rightShooterSpeedEntry.getDouble(4)));
     }
     else{
-      leftShooter.setControl(voltage_request.withOutput(shooterVoltage));
+      leftShooter.setControl(voltage_request.withOutput(2));
 
-      rightShooter.setControl(voltage_request.withOutput(shooterVoltage - ShooterConstants.LEFT_TO_RIGHT_VOLTAGE_OFFSET));
+      rightShooter.setControl(voltage_request.withOutput(2));
     }
   }
 

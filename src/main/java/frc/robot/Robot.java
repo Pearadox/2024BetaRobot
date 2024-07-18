@@ -112,12 +112,6 @@ public class Robot extends LoggedRobot {
     drivetrain.changeIntakePipeline(1);
     shooter.setCurrentLimit(65);
 
-    if(drivetrain.isRedAlliance()){
-      llTable.getEntry("priorityid").setNumber(4);
-    }
-    else{
-      llTable.getEntry("priorityid").setNumber(7);
-    }
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

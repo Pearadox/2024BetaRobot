@@ -166,6 +166,12 @@ public class Drivetrain extends SubsystemBase {
     SmarterDashboard.putData("Right Back Module State", rightBack.getState(), "Drivetrain");
     SmarterDashboard.putData("Odometry", getPose(), "Drivetrain");
 
+    if(RobotContainer.driverController.getRightTriggerAxis() >= 95){
+      setNoteAlignMode();
+    }else if(driveMode == DriveMode.NoteAlign){
+      setNormalMode();
+    }
+
     leftFrontStateEntry.setString(leftFront.getState().toString());
     rightFrontStateEntry.setString(rightFront.getState().toString());
     leftBackStateEntry.setString(leftBack.getState().toString());
@@ -432,59 +438,9 @@ public class Drivetrain extends SubsystemBase {
   public double getAlignSpeed(){
     double alignSpeed;
 
-    if(isRedAlliance()){
-      if(shooterllTable.getEntry("tid").getDouble(0) == 4){
-        double error = shooterllTable.getEntry("tx").getDouble(0);
+    double error = shooterllTable.getEntry("tx").getDouble(0);
         
-        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(shooterllTable.getEntry("tx").getDouble(0), 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
-      }
-      else{
-        double alignAngle = getAlignAngle(4);
-
-        double error = alignAngle - getHeading();
-
-        if(error > 180) {
-          error -= 360;
-        }
-        else if(error < -180){
-          error += 360;
-        }
-        
-
-        if(Math.abs(error) > 1){
-          alignSpeed = Math.signum(-error) * SwerveConstants.kS_PERCENT + SwerveConstants.kP_PERCENT * -error;
-        }
-        else{
-          alignSpeed = 0;
-        }
-      }
-    }
-    else{
-      if(shooterllTable.getEntry("tid").getDouble(0) == 7){
-        double error = shooterllTable.getEntry("tx").getDouble(0);
-        
-        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(shooterllTable.getEntry("tx").getDouble(0), 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
-      }
-      else{
-        double alignAngle = getAlignAngle(7);
-
-        double error = alignAngle - getHeading();
-
-        if(error > 180) {
-          error -= 360;
-        }
-        else if(error < -180){
-          error += 360;
-          }
-        
-        if(Math.abs(error) > 1){
-          alignSpeed = Math.signum(-error) * SwerveConstants.kS_PERCENT + SwerveConstants.kP_PERCENT * -error;
-        }
-        else{
-          alignSpeed = 0;
-        }
-      }
-    }
+    alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(shooterllTable.getEntry("tx").getDouble(0), 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
 
     return alignSpeed;
   }

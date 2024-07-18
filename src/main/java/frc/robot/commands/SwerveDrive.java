@@ -87,7 +87,7 @@ public class SwerveDrive extends Command {
     }
     else if(drivetrain.getDriveMode() == Drivetrain.DriveMode.NoteAlign){
       drivetrain.swerveDrive(
-          0.5, 
+          0, 
           0, 
           -drivetrain.getNoteAlignSpeed(),
           false,
