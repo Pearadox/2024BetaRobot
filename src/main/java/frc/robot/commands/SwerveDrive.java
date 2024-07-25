@@ -73,8 +73,8 @@ public class SwerveDrive extends Command {
       }
       else{
         drivetrain.swerveDrive(
-          -driverController.getLeftY(), 
-          -driverController.getLeftX(), 
+          0,
+          0,
           -drivetrain.getAlignSpeed(),
           true,
           new Translation2d(),
@@ -87,8 +87,8 @@ public class SwerveDrive extends Command {
     }
     else if(drivetrain.getDriveMode() == Drivetrain.DriveMode.NoteAlign){
       drivetrain.swerveDrive(
-          0, 
-          0, 
+          0,
+          0,
           -drivetrain.getNoteAlignSpeed(),
           false,
           new Translation2d(),

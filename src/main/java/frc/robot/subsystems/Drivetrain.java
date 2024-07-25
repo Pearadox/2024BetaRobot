@@ -166,12 +166,6 @@ public class Drivetrain extends SubsystemBase {
     SmarterDashboard.putData("Right Back Module State", rightBack.getState(), "Drivetrain");
     SmarterDashboard.putData("Odometry", getPose(), "Drivetrain");
 
-    if(RobotContainer.driverController.getRightTriggerAxis() >= 95){
-      setNoteAlignMode();
-    }else if(driveMode == DriveMode.NoteAlign){
-      setNormalMode();
-    }
-
     leftFrontStateEntry.setString(leftFront.getState().toString());
     rightFrontStateEntry.setString(rightFront.getState().toString());
     leftBackStateEntry.setString(leftBack.getState().toString());

@@ -140,12 +140,12 @@ public class Robot extends LoggedRobot {
     drivetrain.changeIntakePipeline(1);
     shooter.setCurrentLimit(50);
 
-    if(drivetrain.isRedAlliance()){
-      llTable.getEntry("priorityid").setNumber(4);
-    }
-    else{
-      llTable.getEntry("priorityid").setNumber(7);
-    }
+    // if(drivetrain.isRedAlliance()){
+    //   llTable.getEntry("priorityid").setNumber(4);
+    // }
+    // else{
+    //   llTable.getEntry("priorityid").setNumber(7);
+    // }
   }
 
   /** This function is called periodically during operator control. */

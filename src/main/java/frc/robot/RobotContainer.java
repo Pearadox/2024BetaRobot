@@ -65,7 +65,7 @@ public class RobotContainer {
   private final JoystickButton zeroingShooter_X = new JoystickButton(driverController, XboxController.Button.kX.value);
   private final JoystickButton outtake_B = new JoystickButton(driverController, XboxController.Button.kB.value);
   private final JoystickButton turnToApril_LB = new JoystickButton(driverController, XboxController.Button.kLeftBumper.value);
-  private final JoystickButton turnToNote_LS = new JoystickButton(driverController, XboxController.Button.kLeftStick.value);
+  private final JoystickButton turnToNote_Y = new JoystickButton(driverController, XboxController.Button.kY.value);
 
   //Operator Controls
   public static final CommandXboxController commandOpController = new CommandXboxController(IOConstants.OP_CONTROLLER_PORT);
@@ -121,7 +121,7 @@ public class RobotContainer {
     outtake_B.whileTrue(new Outtake());
     turnToApril_LB.onTrue(new InstantCommand(() -> drivetrain.setAlignMode()))
       .onFalse(new InstantCommand(() -> drivetrain.setNormalMode()));
-    turnToNote_LS.onTrue(new InstantCommand(() -> drivetrain.setNoteAlignMode())
+    turnToNote_Y.onTrue(new InstantCommand(() -> drivetrain.setNoteAlignMode())
       .andThen(new InstantCommand(() -> drivetrain.changeIntakePipeline(1))))
       .onFalse(new InstantCommand(() -> drivetrain.setNormalMode()));
 
