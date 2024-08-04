@@ -8,18 +8,22 @@ import java.io.IOException;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -76,6 +80,7 @@ public class RobotContainer {
   private final JoystickButton shooterAmpPassingMode_Start = new JoystickButton(opController, XboxController.Button.kStart.value);
   private final JoystickButton shooterManualMode_B = new JoystickButton(opController, XboxController.Button.kB.value);
   private final JoystickButton shooterSpeakerMode_X = new JoystickButton(opController, XboxController.Button.kX.value);
+  private final JoystickButton formX_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
   private final JoystickButton resetClimbSequence_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
   private final JoystickButton nextClimbSequenceStep_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
 
@@ -131,6 +136,7 @@ public class RobotContainer {
     shooterSourcePassingMode_Y.onTrue(new InstantCommand(() -> shooter.setSourcePassingMode()));
     shooterAmpPassingMode_Start.onTrue(new InstantCommand(() -> shooter.setAmpPassingMode()));
     shooterSpeakerMode_X.onTrue(new InstantCommand(() -> shooter.setSpeakerMode()));
+    formX_LB.whileTrue(new RunCommand(() -> drivetrain.setModulesX()));
     // resetClimbSequence_LB.whileTrue(new InstantCommand(() -> climber.setZeroing(true)))
     //   .onFalse(new InstantCommand(() -> climber.resetEncoders())
     //   .andThen(new InstantCommand(() -> climber.setZeroing(false)))
@@ -170,6 +176,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Set Shooter Outtake", new InstantCommand(() -> shooter.setOuttakeMode()));
     NamedCommands.registerCommand("Turn Forward", new RunCommand(() -> drivetrain.turnToHeading(0, new Translation2d())).until(() -> Math.abs(drivetrain.getHeading()) < 1));
     NamedCommands.registerCommand("Turn to Angle 5", new RunCommand(() -> drivetrain.turnToHeading(5, new Translation2d())).until(() -> Math.abs(drivetrain.getHeading() - 5) < 1));
+    NamedCommands.registerCommand("Check Note", new ConditionalCommand(new WaitCommand(10), new WaitCommand(0), () -> intake.hasTarget2()));
+    NamedCommands.registerCommand("Has Note", new ConditionalCommand(new WaitCommand(10), new WaitCommand(0), () -> transport.hasNote()));
     NamedCommands.registerCommand("Note Align", new RunCommand(() -> drivetrain.swerveDrive(
       0.5, 
       0, 
@@ -177,7 +185,12 @@ public class RobotContainer {
       false,
       new Translation2d(),
       true))
-      .withTimeout(0.55));
+      .withTimeout(0.7));
+    NamedCommands.registerCommand("Note Align Pose", AutoBuilder.pathfindToPose(
+        drivetrain.getTargetPose(),
+        new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
+        0,
+        0));
   }
 
   public void setDefaultCommands(){

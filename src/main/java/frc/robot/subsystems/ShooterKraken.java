@@ -105,10 +105,10 @@ public class ShooterKraken extends SubsystemBase {
     pivotLerp.addPoint(22.4, 14.2); //10ft // WCMP: Subtracted 0.5 from this point
     pivotLerp.addPoint(21.4, 13.5);
     pivotLerp.addPoint(20.3, 12.7); // WCMP: Subtracted 1.0 from this point and some points below
-    pivotLerp.addPoint(19.1, 12.1); 
-    pivotLerp.addPoint(18.3, 11.65); //WCMP: Subtracted 0.05 from this point and some points below
-    pivotLerp.addPoint(17.4, 11.15); //15ft
-    pivotLerp.addPoint(16.4, 10.35);
+    pivotLerp.addPoint(19.1, 12.0); 
+    pivotLerp.addPoint(18.3, 11.55); //WCMP: Subtracted 0.05 from this point and some points below
+    pivotLerp.addPoint(17.4, 11.05); //15ft
+    pivotLerp.addPoint(16.4, 10.15);
     pivotLerp.addPoint(15.9, 9.65);
     pivotLerp.addPoint(15.35, 9.45);
     pivotLerp.addPoint(14.9, 9.15);
@@ -172,7 +172,7 @@ public class ShooterKraken extends SubsystemBase {
 
     //   rightShooter.setControl(voltage_request.withOutput(0));
     // }
-    if ((!transport.hasNote() && (((System.currentTimeMillis()) - transport.getRequestedShootTime()) > 100))) {
+    if ((!transport.hasNote() && (((System.currentTimeMillis()) - transport.getRequestedShootTime()) > 100)) && !DriverStation.isAutonomous() && !RobotContainer.opController.getRightBumper()) {
       leftShooter.setControl(voltage_request.withOutput(0));
       rightShooter.setControl(voltage_request.withOutput(0));
     }
@@ -326,7 +326,7 @@ public class ShooterKraken extends SubsystemBase {
       Pose2d robotPose = RobotContainer.poseEstimation.getEstimatedPose();
 
       z = tagPose.getX() - robotPose.getX() + 0.07;
-      x = (tagPose.getY() - 0.11) - robotPose.getY();
+      x = (tagPose.getY() - (isRedAlliance() ? 0.11 : 0.14)) - robotPose.getY();
     }
 
     double hypot = Math.hypot(x, z);

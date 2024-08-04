@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import java.text.DecimalFormat;
+import java.util.Optional;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -23,9 +24,13 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -53,7 +58,7 @@ public class Drivetrain extends SubsystemBase {
   public static final NetworkTable intakellTable = NetworkTableInstance.getDefault().getTable(VisionConstants.INTAKE_LL_NAME);
 
   public enum DriveMode{
-    Normal, Align, NoteAlign
+    Normal, Align, NoteAlign, X
   }
 
   private DriveMode driveMode = DriveMode.Normal;
@@ -68,8 +73,13 @@ public class Drivetrain extends SubsystemBase {
   private GenericEntry robotAngleEntry;
   private GenericEntry angularSpeedEntry;
 
+  private Field2d field = new Field2d();
+  private PowerDistribution powerDistribution = new PowerDistribution();
+
   private static final Drivetrain DRIVETRAIN = new Drivetrain();
 
+  private static final Intake intake = Intake.getInstance();
+ 
   /* 
   *<p> 
   *This returns the Drivetrain instead of creating a new subsystem
@@ -140,6 +150,9 @@ public class Drivetrain extends SubsystemBase {
       () -> isRedAlliance(),
       this);
 
+    //PPHolonomicDriveController.setRotationTargetOverride(this::getRotationTargetOverride);
+
+
     lastHeading = getHeading();
 
     leftFrontStateEntry = swerveTab.add("Left Front Module State", leftFront.getState().toString()).withSize(4, 1).withPosition(0, 0).getEntry();
@@ -154,6 +167,8 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     RobotContainer.poseEstimation.updateOdometry(getHeadingRotation2d(), getModulePositions());
 
+    smartCropping();
+
     SmarterDashboard.putString("Drive Mode", getDriveMode().toString(), "Drivetrain");
     SmarterDashboard.putNumber("Robot Angle", getHeading(), "Drivetrain");
     SmarterDashboard.putString("Angular Speed", new DecimalFormat("#.00").format((-gyro.getRate() / 180)) + "\u03C0" + " rad/s", "Drivetrain");
@@ -165,6 +180,36 @@ public class Drivetrain extends SubsystemBase {
     SmarterDashboard.putData("Left Back Module State", leftBack.getState(), "Drivetrain");
     SmarterDashboard.putData("Right Back Module State", rightBack.getState(), "Drivetrain");
     SmarterDashboard.putData("Odometry", getPose(), "Drivetrain");
+
+    // SmartDashboard.putData("Swerve Drive", new Sendable() {
+    //   @Override
+    //   public void initSendable(SendableBuilder builder){
+    //     builder.setSmartDashboardType("Swerve Drive");
+    //     builder.addDoubleProperty("Front Left Angle", () -> leftFront.getState().angle.getDegrees(), null);
+    //     builder.addDoubleProperty("Front Left Velocity", () -> leftFront.getDriveMotorVelocity(), null);
+
+    //     builder.addDoubleProperty("Front Right Angle", () -> rightFront.getState().angle.getDegrees(), null);
+    //     builder.addDoubleProperty("Front Right Velocity", () -> rightFront.getDriveMotorVelocity(), null);
+
+    //     builder.addDoubleProperty("Back Left Angle", () -> leftBack.getState().angle.getDegrees(), null);
+    //     builder.addDoubleProperty("Back Left Velocity", () -> leftBack.getDriveMotorVelocity(), null);
+
+    //     builder.addDoubleProperty("Back Right Angle", () -> rightBack.getState().angle.getDegrees(), null);
+    //     builder.addDoubleProperty("Back Right Velocity", () -> rightBack.getDriveMotorVelocity(), null);
+
+    //     builder.addDoubleProperty("Robot Angle", () -> getHeading(), null);
+    //   }
+    // });
+    field.setRobotPose(getPose());
+    SmartDashboard.putData("Field", field);
+    // SmartDashboard.putData("Align PID", alignPIDController);
+    // SmartDashboard.putData("Note Align PID", noteAlignPIDController);
+    SmartDashboard.putNumber("Voltage", powerDistribution.getVoltage());
+    SmartDashboard.putNumber("Total Current", powerDistribution.getTotalCurrent());
+    SmartDashboard.putNumber("Temperature", powerDistribution.getTemperature());
+    SmarterDashboard.putNumber("Match Time", DriverStation.getMatchTime(), "Misc"); 
+    SmarterDashboard.putBoolean("Joystick Connection", DriverStation.isJoystickConnected(0) && DriverStation.isJoystickConnected(1), "Misc"); 
+    SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
     leftFrontStateEntry.setString(leftFront.getState().toString());
     rightFrontStateEntry.setString(rightFront.getState().toString());
@@ -643,9 +688,77 @@ public class Drivetrain extends SubsystemBase {
     return Math.hypot(Math.abs(deltaX), Math.abs(deltaY)) > 8 ? Math.hypot(Math.abs(deltaX), Math.abs(deltaY)) : 8;
   }
 
-  
+  public void setModulesX(){
+    leftFront.setRawState(new SwerveModuleState(0, new Rotation2d(45)));
+    rightFront.setRawState(new SwerveModuleState(0, new Rotation2d(-45)));
+    leftBack.setRawState(new SwerveModuleState(0, new Rotation2d(-45)));
+    rightBack.setRawState(new SwerveModuleState(0, new Rotation2d(45)));
+  }
+
+  public Pose2d getTargetPose(){
+    double y_error = -intakellTable.getEntry("ty").getDouble(0);
+    double x_error = intakellTable.getEntry("tx").getDouble(0);
+    double dist = VisionConstants.INTAKE_TO_FLOOR / Math.tan(y_error);
+
+    SmarterDashboard.putNumber("Dist to Note", dist, "Drivetrain");
+
+    double x, y;
+
+    //Heading control probably doesnt work
+    if(!isRedAlliance()){
+      x_error += 180;
+      if(x_error > 180){
+        x_error -= 360;
+      }
+    }
+
+    double error = x_error - getHeading();
+
+    if(error > 180) {
+       error -= 360;
+    }
+    else if(error < -180){
+       error += 360;
+    }
+
+    if(error > 0) {
+      x = Math.sin(x_error) * dist;
+      y = Math.cos(y_error) * dist;
+    }else{
+      x = -(Math.sin(x_error) * dist);
+      y = Math.cos(y_error) * dist;
+    }
+
+    x = getPose().getX() + Math.signum(x) * x;
+    y = getPose().getY() + y;
+
+    return new Pose2d(x, y,
+     new Rotation2d(0));
+  }
+
   public void changeIntakePipeline(int pipeline){
     intakellTable.getEntry("pipeline").setNumber(pipeline);
+  }
+
+  public Optional<Rotation2d> getRotationTargetOverride(){
+   if(intake.hasTarget()) {
+       double error = intakellTable.getEntry("tx").getDouble(0);
+       return Optional.of(new Rotation2d(getPose().getRotation().getDegrees() + error));
+   } else {
+       return Optional.empty();
+   }
+  }
+
+  public void smartCropping(){
+    if(shooterllTable.getEntry("tv").getDouble(0) == 0){
+      shooterllTable.getEntry("crop").setDoubleArray(new double[]{-1, 1, -1, 1});
+    }else{
+      double ty = shooterllTable.getEntry("ty").getDouble(0);
+
+      shooterllTable.getEntry("crop").setDoubleArray(new double[]{-1, 1,
+        (ty / (VisionConstants.L3G_POV[1] / 2)) - 0.3,
+        (ty / (VisionConstants.L3G_POV[1] / 2)) + 0.3});
+    }
   }
 
   public DriveMode getDriveMode(){
@@ -660,6 +773,10 @@ public class Drivetrain extends SubsystemBase {
     driveMode = DriveMode.Align;
   }
 
+  public void setXMode(){
+    driveMode = DriveMode.X;
+  }
+  
   public void setNoteAlignMode(){
     driveMode = DriveMode.NoteAlign;
   }

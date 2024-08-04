@@ -134,12 +134,26 @@ public class SwerveModule extends SubsystemBase {
     setSpeed(desiredState);
   }
 
+  public void setRawState(SwerveModuleState desiredState){
+    desiredState = SwerveModuleState.optimize(desiredState, getState().angle); 
+    
+    setRawAngle(desiredState);
+    setSpeed(desiredState);
+  }
+
   public void setSpeed(SwerveModuleState desiredState){
     driveMotor.setControl(driveMotorRequest.withOutput(desiredState.speedMetersPerSecond / SwerveConstants.DRIVETRAIN_MAX_SPEED));
   }
 
   public void setAngle(SwerveModuleState desiredState){
     Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (SwerveConstants.DRIVETRAIN_MAX_SPEED * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
+    
+    turnMotor.setControl(turnMotorRequest.withOutput(turnPIDController.calculate(getTurnMotorPosition(), desiredState.angle.getRadians())));
+    lastAngle = angle;
+  }
+
+  public void setRawAngle(SwerveModuleState desiredState){
+    Rotation2d angle = desiredState.angle;
     
     turnMotor.setControl(turnMotorRequest.withOutput(turnPIDController.calculate(getTurnMotorPosition(), desiredState.angle.getRadians())));
     lastAngle = angle;

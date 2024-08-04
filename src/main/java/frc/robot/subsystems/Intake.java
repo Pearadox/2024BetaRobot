@@ -41,21 +41,22 @@ public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   public Intake() {
     utbRoller = new PearadoxSparkMax(IntakeConstants.UTB_ROLLER_ID, MotorType.kBrushless, IdleMode.kCoast, 80, false);
-    debouncer = new Debouncer(0.5, DebounceType.kRising);
+    debouncer = new Debouncer(0.3, DebounceType.kRising);
   }
 
   @Override
   public void periodic() {
     SmarterDashboard.putNumber("Intake Current", utbRoller.getOutputCurrent(), "Intake");
     SmarterDashboard.putBoolean("Intake Has Target", hasTarget(), "Intake");
+    SmarterDashboard.putBoolean("See Note", llTable.getEntry("tv").getDouble(0) == 1, "Intake");
 
-    if(!rumbled && utbRoller.getOutputCurrent() > 40){
+    if(!rumbled && utbRoller.getOutputCurrent() > 45){
       CommandScheduler.getInstance().schedule(rumbleController());
       rumbled = true;
     }
-    if(rumbled && !(utbRoller.getOutputCurrent() > 40)){
+    if(rumbled && !(utbRoller.getOutputCurrent() > 45)){
       rumbled = false;
-    }
+    } 
   }
 
   public void utbIntakeIn(){
@@ -80,5 +81,9 @@ public class Intake extends SubsystemBase {
 
   public boolean hasTarget(){
     return debouncer.calculate(llTable.getEntry("tv").getDouble(0) == 1);
+  }
+
+  public boolean hasTarget2(){
+    return llTable.getEntry("tv").getDouble(0) == 1;
   }
 }

@@ -13,6 +13,8 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
+
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -73,6 +75,8 @@ public class Robot extends LoggedRobot {
     } catch (IOException e) {
       e.printStackTrace();
     }
+
+    FollowPathCommand.warmupCommand().schedule();
   }
 
   /**
@@ -127,7 +131,10 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    RobotContainer.poseEstimation.periodic();
+
+  }
 
   @Override
   public void teleopInit() {
