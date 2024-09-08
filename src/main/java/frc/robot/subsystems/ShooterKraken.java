@@ -157,6 +157,7 @@ public class ShooterKraken extends SubsystemBase {
     SmarterDashboard.putNumber("Left Shooter Stator Current", leftShooter.getStatorCurrent().getValueAsDouble(), "Shooter");
     SmarterDashboard.putNumber("Right Shooter Supply Current", rightShooter.getSupplyCurrent().getValueAsDouble(), "Shooter");
     SmarterDashboard.putNumber("Left Shooter Supply Current", leftShooter.getSupplyCurrent().getValueAsDouble(), "Shooter");
+    SmarterDashboard.putBoolean("If Auto Mode", getShooterMode() == ShooterMode.Auto, "Subsystem ");
 
     shooterModeEntry.setString(shooterMode.toString());
     pivotAdjustEntry.setDouble(pivotAdjust);
@@ -172,7 +173,7 @@ public class ShooterKraken extends SubsystemBase {
 
     //   rightShooter.setControl(voltage_request.withOutput(0));
     // }
-    if ((!transport.hasNote() && (((System.currentTimeMillis()) - transport.getRequestedShootTime()) > 100)) && !DriverStation.isAutonomous() && !RobotContainer.opController.getRightBumper()) {
+    if ((!transport.hasNote() && (((System.currentTimeMillis()) - transport.getRequestedShootTime()) > 100)) && !DriverStation.isAutonomous() && !(RobotContainer.opController.getRightTriggerAxis() >= 95)) {
       leftShooter.setControl(voltage_request.withOutput(0));
       rightShooter.setControl(voltage_request.withOutput(0));
     }
@@ -326,7 +327,7 @@ public class ShooterKraken extends SubsystemBase {
       Pose2d robotPose = RobotContainer.poseEstimation.getEstimatedPose();
 
       z = tagPose.getX() - robotPose.getX() + 0.07;
-      x = (tagPose.getY() - (isRedAlliance() ? 0.11 : 0.14)) - robotPose.getY();
+      x = (tagPose.getY() - (isRedAlliance() ? 0.11 : 0.09 )) - robotPose.getY();
     }
 
     double hypot = Math.hypot(x, z);

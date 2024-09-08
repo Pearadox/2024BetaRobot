@@ -143,7 +143,7 @@ public final class Constants {
 
     public static final double PASSING_VOLTAGE = 6.4;
     public static final double AMP_VOLTAGE = 4.5;
-    public static final double SPEAKER_VOLTAGE = 5.5;
+    public static final double SPEAKER_VOLTAGE = 6.0;
     public static final double TRAP_VOLTAGE = 4;
 
     public static final double LEFT_TO_RIGHT_VOLTAGE_OFFSET = 2.5;
@@ -162,7 +162,7 @@ public final class Constants {
 
     public static final double MANTIS_ROT = 0;
     public static final double IDLE_ROT = 40;
-    public static final double CLIMB_ROT = 90; //127.5
+    public static final double CLIMB_ROT = 80; //127.5
 
     public static final double CLIMBER_kP = 0.15;
     public static final double CLIMBER_kI = 0;
@@ -200,7 +200,7 @@ public final class Constants {
   public static final class VisionConstants{
     public static final String SHOOTER_LL_NAME = "limelight-shooter";
     public static final String INTAKE_LL_NAME = "limelight-intake";
-    public static final double INTAKE_TO_FLOOR = 0; //TODO find
+    public static final double INTAKE_TO_FLOOR = 0.24765; //TODO find
     public static final double[] L3G_POV = new double[]{80,56};
 
     public static final Vector<N3> LIMELIGHT_STD_DEV = VecBuilder.fill(.7, .7, .9999999);

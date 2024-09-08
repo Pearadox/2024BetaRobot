@@ -508,7 +508,7 @@ public class Drivetrain extends SubsystemBase {
       if(shooterllTable.getEntry("tid").getDouble(0) == 7){
         double error = shooterllTable.getEntry("tx").getDouble(0);
         
-        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(shooterllTable.getEntry("tx").getDouble(0), 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
+        alignSpeed = Math.abs(error) > 0.5 ? -alignPIDController.calculate(shooterllTable.getEntry("tx").getDouble(0) + (DriverStation.isAutonomous() ? 3 : 0), 0) + (Math.signum(error) * SwerveConstants.kS_PERCENT): 0;
       }
       else{
         double alignAngle = getAlignAngle(7);
@@ -741,7 +741,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public Optional<Rotation2d> getRotationTargetOverride(){
-   if(intake.hasTarget()) {
+   if(intake.hasTargetRising()) {
        double error = intakellTable.getEntry("tx").getDouble(0);
        return Optional.of(new Rotation2d(getPose().getRotation().getDegrees() + error));
    } else {

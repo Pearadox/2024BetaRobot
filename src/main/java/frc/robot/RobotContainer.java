@@ -9,6 +9,7 @@ import java.io.IOException;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -42,6 +43,7 @@ import frc.robot.subsystems.AmpBar;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.ShooterKraken;
 import frc.robot.subsystems.Transport;
 
@@ -56,9 +58,10 @@ public class RobotContainer {
   public static final Drivetrain drivetrain = Drivetrain.getInstance();
   public static final Intake intake = Intake.getInstance();
   public static final Transport transport = Transport.getInstance();
-  // public static final Climber climber = Climber.getInstance();
+  public static final Climber climber = Climber.getInstance();
   public static final AmpBar ampBar = AmpBar.getInstance();
   public static final ShooterKraken shooter = ShooterKraken.getInstance();
+  public static final LEDStrip ledStrip = new LEDStrip(60, 0);
 
   //Driver Controls
   public static final CommandXboxController commandDriverController = new CommandXboxController(IOConstants.DRIVER_CONTROLLER_PORT);
@@ -70,6 +73,7 @@ public class RobotContainer {
   private final JoystickButton outtake_B = new JoystickButton(driverController, XboxController.Button.kB.value);
   private final JoystickButton turnToApril_LB = new JoystickButton(driverController, XboxController.Button.kLeftBumper.value);
   private final JoystickButton turnToNote_LS = new JoystickButton(driverController, XboxController.Button.kLeftStick.value);
+  private final JoystickButton driveToAmp_Y = new JoystickButton(driverController, XboxController.Button.kY.value);
 
   //Operator Controls
   public static final CommandXboxController commandOpController = new CommandXboxController(IOConstants.OP_CONTROLLER_PORT);
@@ -80,7 +84,6 @@ public class RobotContainer {
   private final JoystickButton shooterAmpPassingMode_Start = new JoystickButton(opController, XboxController.Button.kStart.value);
   private final JoystickButton shooterManualMode_B = new JoystickButton(opController, XboxController.Button.kB.value);
   private final JoystickButton shooterSpeakerMode_X = new JoystickButton(opController, XboxController.Button.kX.value);
-  private final JoystickButton formX_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
   private final JoystickButton resetClimbSequence_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
   private final JoystickButton nextClimbSequenceStep_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
 
@@ -101,10 +104,6 @@ public class RobotContainer {
     configureAutoTab();
 
     aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
-      
-    // HttpCamera httpCamera = new HttpCamera("Limelight", "http://10.54.14.11:5800");
-    // CameraServer.addCamera(httpCamera);
-    // driverTab.add(httpCamera).withSize(6, 4).withPosition(4, 0);
   }
 
   /**
@@ -129,19 +128,22 @@ public class RobotContainer {
     turnToNote_LS.onTrue(new InstantCommand(() -> drivetrain.setNoteAlignMode())
       .andThen(new InstantCommand(() -> drivetrain.changeIntakePipeline(1))))
       .onFalse(new InstantCommand(() -> drivetrain.setNormalMode()));
+    driveToAmp_Y.whileTrue(AutoBuilder.pathfindThenFollowPath(
+      PathPlannerPath.fromPathFile("Amp Align"),
+      new PathConstraints(3, 4, Units.degreesToRadians(540), Units.degreesToRadians(720))
+    ));
 
     //Operator Buttons
     shooterAutoMode_A.onTrue(new InstantCommand(() -> shooter.setAutoMode()));
-    shooterManualMode_B.onTrue(new InstantCommand(() -> shooter.setManualMode()));
+    // shooterManualMode_B.onTrue(new InstantCommand(() -> shooter.setManualMode()));
     shooterSourcePassingMode_Y.onTrue(new InstantCommand(() -> shooter.setSourcePassingMode()));
     shooterAmpPassingMode_Start.onTrue(new InstantCommand(() -> shooter.setAmpPassingMode()));
     shooterSpeakerMode_X.onTrue(new InstantCommand(() -> shooter.setSpeakerMode()));
-    formX_LB.whileTrue(new RunCommand(() -> drivetrain.setModulesX()));
-    // resetClimbSequence_LB.whileTrue(new InstantCommand(() -> climber.setZeroing(true)))
-    //   .onFalse(new InstantCommand(() -> climber.resetEncoders())
-    //   .andThen(new InstantCommand(() -> climber.setZeroing(false)))
-    //   .andThen(new InstantCommand(() -> climber.resetClimbSequence())));
-    // nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
+    resetClimbSequence_LB.whileTrue(new InstantCommand(() -> climber.setZeroing(true)))
+      .onFalse(new InstantCommand(() -> climber.resetEncoders())
+      .andThen(new InstantCommand(() -> climber.setZeroing(false)))
+      .andThen(new InstantCommand(() -> climber.resetClimbSequence())));
+    nextClimbSequenceStep_RB.onTrue(new InstantCommand(() -> climber.nextClimbSequenceStep()));
   }
 
   /**
@@ -176,7 +178,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Set Shooter Outtake", new InstantCommand(() -> shooter.setOuttakeMode()));
     NamedCommands.registerCommand("Turn Forward", new RunCommand(() -> drivetrain.turnToHeading(0, new Translation2d())).until(() -> Math.abs(drivetrain.getHeading()) < 1));
     NamedCommands.registerCommand("Turn to Angle 5", new RunCommand(() -> drivetrain.turnToHeading(5, new Translation2d())).until(() -> Math.abs(drivetrain.getHeading() - 5) < 1));
-    NamedCommands.registerCommand("Check Note", new ConditionalCommand(new WaitCommand(10), new WaitCommand(0), () -> intake.hasTarget2()));
+    NamedCommands.registerCommand("Check Note", new ConditionalCommand(new WaitCommand(10), new WaitCommand(0), () -> intake.hasTargetFalling()));
     NamedCommands.registerCommand("Has Note", new ConditionalCommand(new WaitCommand(10), new WaitCommand(0), () -> transport.hasNote()));
     NamedCommands.registerCommand("Note Align", new RunCommand(() -> drivetrain.swerveDrive(
       0.5, 
@@ -197,7 +199,7 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new SwerveDrive());
     intake.setDefaultCommand(new IntakeHold());
     shooter.setDefaultCommand(new ShooterHold());
-    // climber.setDefaultCommand(new ClimberHold());
+    climber.setDefaultCommand(new ClimberHold());
     ampBar.setDefaultCommand(new AmpBarHold());
   }
 

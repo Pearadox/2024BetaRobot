@@ -60,18 +60,27 @@ public class Climber extends SubsystemBase {
     SmarterDashboard.putNumber("Climb Sequence Step", climbSequenceStep, "Climber");
     SmarterDashboard.putNumber("Climber Adjust", climberAdjust, "Climber");
 
+    // if(RobotContainer.opController.getLeftTriggerAxis() > 0.95){
+    //   climberAdjust -= 0.05;
+    // }
+    // else if(RobotContainer.opController.getRightTriggerAxis() > 0.95){
+    //   climberAdjust += 0.05;
+    // }
+
     if(RobotContainer.opController.getLeftTriggerAxis() > 0.95){
-      climberAdjust -= 0.05;
+      climberAdjust -= 1;
     }
     else if(RobotContainer.opController.getRightTriggerAxis() > 0.95){
-      climberAdjust += 0.05;
-      
+      climberAdjust += 1;
     }
   }
 
   public void setClimberPosition(double reference){
     leftClimberController.setReference(reference + climberAdjust, ControlType.kPosition, 0);
     rightClimberController.setReference(reference + climberAdjust, ControlType.kPosition, 0);
+
+    // leftClimberController.setReference(climberAdjust, ControlType.kPosition, 0);
+    // rightClimberController.setReference(climberAdjust, ControlType.kPosition, 0);
   }
 
   public void setZeroing(boolean zeroing){

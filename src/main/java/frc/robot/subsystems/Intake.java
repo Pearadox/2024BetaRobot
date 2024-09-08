@@ -28,7 +28,9 @@ public class Intake extends SubsystemBase {
 
   private boolean rumbled = false;
 
-  private Debouncer debouncer;
+  private Debouncer debouncerRising;
+  private Debouncer debouncerFalling;
+
 
   private static final Intake INTAKE = new Intake();
 
@@ -41,14 +43,17 @@ public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   public Intake() {
     utbRoller = new PearadoxSparkMax(IntakeConstants.UTB_ROLLER_ID, MotorType.kBrushless, IdleMode.kCoast, 80, false);
-    debouncer = new Debouncer(0.3, DebounceType.kRising);
+    debouncerRising = new Debouncer(0.3, DebounceType.kRising);
+    debouncerFalling = new Debouncer(0.2, DebounceType.kFalling);
+
   }
 
   @Override
   public void periodic() {
     SmarterDashboard.putNumber("Intake Current", utbRoller.getOutputCurrent(), "Intake");
-    SmarterDashboard.putBoolean("Intake Has Target", hasTarget(), "Intake");
-    SmarterDashboard.putBoolean("See Note", llTable.getEntry("tv").getDouble(0) == 1, "Intake");
+    SmarterDashboard.putBoolean("Intake Has Target Rising", hasTargetRising(), "Intake");
+    SmarterDashboard.putBoolean("Intake Has Target Falling", hasTargetFalling(), "Intake");
+    SmarterDashboard.putBoolean("Intake Has Target", hasTargetFalling(), "Intake");
 
     if(!rumbled && utbRoller.getOutputCurrent() > 45){
       CommandScheduler.getInstance().schedule(rumbleController());
@@ -79,11 +84,15 @@ public class Intake extends SubsystemBase {
       .andThen(new InstantCommand(() -> RobotContainer.opController.setRumble(RumbleType.kBothRumble, 0)));
   }
 
-  public boolean hasTarget(){
-    return debouncer.calculate(llTable.getEntry("tv").getDouble(0) == 1);
+  public boolean hasTargetRising(){
+    return debouncerRising.calculate(llTable.getEntry("tv").getDouble(0) == 1);
   }
 
-  public boolean hasTarget2(){
+  public boolean hasTargetFalling(){
+    return debouncerFalling.calculate(llTable.getEntry("tv").getDouble(0) == 1);
+  }
+
+  public boolean hasTargetRaw(){
     return llTable.getEntry("tv").getDouble(0) == 1;
   }
 }
