@@ -79,8 +79,8 @@ public final class Constants {
     ); //TODO: Determine the values
 
     //Teleop constraints
-    public static final double TELE_DRIVE_MAX_SPEED = DRIVETRAIN_MAX_SPEED; //halved for demo
-    public static final double TELE_DRIVE_MAX_ANGULAR_SPEED = DRIVETRAIN_MAX_ANGULAR_SPEED / 1.25; //halved for demo
+    public static final double TELE_DRIVE_MAX_SPEED = DRIVETRAIN_MAX_SPEED * 0.35; //changed for demo
+    public static final double TELE_DRIVE_MAX_ANGULAR_SPEED = (DRIVETRAIN_MAX_ANGULAR_SPEED / 1.25) *0.5 ; //changed for demo
     public static final double TELE_DRIVE_MAX_ACCELERATION = 3;
     public static final double TELE_DRIVE_MAX_ANGULAR_ACCELERATION = 3;
 
@@ -143,7 +143,7 @@ public final class Constants {
 
     public static final double PASSING_VOLTAGE = 6.4;
     public static final double AMP_VOLTAGE = 4.5;
-    public static final double SPEAKER_VOLTAGE = 6.0; //halved for demo
+    public static final double SPEAKER_VOLTAGE = 6.0;
     public static final double TRAP_VOLTAGE = 4;
 
     public static final double LEFT_TO_RIGHT_VOLTAGE_OFFSET = 2.5;
