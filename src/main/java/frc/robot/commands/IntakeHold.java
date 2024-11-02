@@ -28,9 +28,12 @@ public class IntakeHold extends Command {
     if(transport.hasNote()){
       intake.utbIntakeStop();
     }
-    else{
-      intake.utbIntakeIn();
-    }
+
+    // Commented to make intake manual; may need to change
+
+    // else{
+    //   intake.utbIntakeIn(); 
+    // }
   }
 
   // Called once the command ends or is interrupted.

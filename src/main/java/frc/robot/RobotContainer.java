@@ -73,7 +73,7 @@ public class RobotContainer {
   public static final Drivetrain drivetrain = Drivetrain.getInstance();
   public static final Intake intake = Intake.getInstance();
   public static final Transport transport = Transport.getInstance();
-  public static final Climber climber = Climber.getInstance();
+  //public static final Climber climber = Climber.getInstance();
   public static final AmpBar ampBar = AmpBar.getInstance();
   public static final ShooterKraken shooter = ShooterKraken.getInstance();
 
@@ -97,8 +97,9 @@ public class RobotContainer {
   private final JoystickButton shooterAmpPassingMode_Start = new JoystickButton(opController, XboxController.Button.kStart.value);
   private final JoystickButton shooterManualMode_B = new JoystickButton(opController, XboxController.Button.kB.value);
   private final JoystickButton shooterSpeakerMode_X = new JoystickButton(opController, XboxController.Button.kX.value);
-  private final JoystickButton resetClimbSequence_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
-  private final JoystickButton nextClimbSequenceStep_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
+  private final JoystickButton intake_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value); //manual intake
+  // private final JoystickButton resetClimbSequence_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
+  // private final JoystickButton nextClimbSequenceStep_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
 
   //Pose Estimation
   public static final PoseEstimation poseEstimation = new PoseEstimation();
@@ -158,6 +159,9 @@ public class RobotContainer {
     shooterSourcePassingMode_Y.onTrue(new InstantCommand(() -> shooter.setSourcePassingMode()));
     shooterAmpPassingMode_Start.onTrue(new InstantCommand(() -> shooter.setAmpPassingMode()));
     shooterSpeakerMode_X.onTrue(new InstantCommand(() -> shooter.setSpeakerMode()));
+    intake_LB.whileTrue(new InstantCommand(() -> intake.utbIntakeIn()))
+      .onFalse(new InstantCommand(() -> intake.utbIntakeStop())); //intakes
+
     // resetClimbSequence_LB.whileTrue(new InstantCommand(() -> climber.setZeroing(true)))
     //   .onFalse(new InstantCommand(() -> climber.resetEncoders())
     //   .andThen(new InstantCommand(() -> climber.setZeroing(false)))
@@ -218,7 +222,7 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new SwerveDrive());
     intake.setDefaultCommand(new IntakeHold());
     shooter.setDefaultCommand(new ShooterHold());
-    climber.setDefaultCommand(new ClimberHold());
+    //climber.setDefaultCommand(new ClimberHold());
     ampBar.setDefaultCommand(new AmpBarHold());
   }
 
