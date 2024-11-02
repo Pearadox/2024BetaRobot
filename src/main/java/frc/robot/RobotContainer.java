@@ -87,7 +87,7 @@ public class RobotContainer {
   private final JoystickButton zeroingShooter_X = new JoystickButton(driverController, XboxController.Button.kX.value);
   private final JoystickButton outtake_B = new JoystickButton(driverController, XboxController.Button.kB.value);
   private final JoystickButton intake_LB = new JoystickButton(driverController, XboxController.Button.kLeftBumper.value);
-    private final JoystickButton shooterSpeakerMode_Y = new JoystickButton(driverController, XboxController.Button.kY.value);
+  private final JoystickButton shooterSpeakerMode_Y = new JoystickButton(driverController, XboxController.Button.kY.value);
 
   //private final JoystickButton turnToApril_LB = new JoystickButton(driverController, XboxController.Button.kLeftBumper.value);
   //private final JoystickButton turnToNote_LS = new JoystickButton(driverController, XboxController.Button.kLeftStick.value);
@@ -100,7 +100,7 @@ public class RobotContainer {
   private final JoystickButton shooterSourcePassingMode_Y = new JoystickButton(opController, XboxController.Button.kY.value);
   private final JoystickButton shooterAmpPassingMode_Start = new JoystickButton(opController, XboxController.Button.kStart.value);
   private final JoystickButton shooterManualMode_B = new JoystickButton(opController, XboxController.Button.kB.value);
-  //[]\private final JoystickButton shooterSpeakerMode_X = new JoystickButton(opController, XboxController.Button.kX.value);
+  private final JoystickButton shooterSpeakerMode_X = new JoystickButton(opController, XboxController.Button.kX.value);
 
   // private final JoystickButton resetClimbSequence_LB = new JoystickButton(opController, XboxController.Button.kLeftBumper.value);
   // private final JoystickButton nextClimbSequenceStep_RB = new JoystickButton(opController, XboxController.Button.kRightBumper.value);
@@ -168,10 +168,10 @@ public class RobotContainer {
 
     //Operator Buttons
     shooterAutoMode_A.onTrue(new InstantCommand(() -> shooter.setAutoMode()));
-    // shooterManualMode_B.onTrue(new InstantCommand(() -> shooter.setManualMode()));
+    shooterManualMode_B.onTrue(new InstantCommand(() -> shooter.setManualMode()));
     shooterSourcePassingMode_Y.onTrue(new InstantCommand(() -> shooter.setSourcePassingMode()));
     shooterAmpPassingMode_Start.onTrue(new InstantCommand(() -> shooter.setAmpPassingMode()));
-    //shooterSpeakerMode_X.onTrue(new InstantCommand(() -> shooter.setSpeakerMode()));
+    shooterSpeakerMode_X.onTrue(new InstantCommand(() -> shooter.setSpeakerMode()));
     
     // resetClimbSequence_LB.whileTrue(new InstantCommand(() -> climber.setZeroing(true)))
     //   .onFalse(new InstantCommand(() -> climber.resetEncoders())
