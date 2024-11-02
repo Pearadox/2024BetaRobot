@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.util.SmarterDashboard;
 
 public class LEDStrip extends SubsystemBase {
    private AddressableLED led;
@@ -262,20 +263,22 @@ public class LEDStrip extends SubsystemBase {
     }
      else {
       animateIdle();
-      rainbowOn = false;     
+      rainbowOn = false;  
+
      }
   }
-  
 
   @Override
   public void periodic() {
+
     if (Timer.getFPGATimestamp() - lastShiftedDefault > 0.01) {
       shiftDefaultColors();
       lastShiftedDefault = Timer.getFPGATimestamp();
     }
+
     ledHold();
     led.setData(ledBuffer);
     
-    Logger.recordOutput("LED/Mode", mode.toString());
-  }
+    SmarterDashboard.putString("LED Mode", mode.toString(), "LEDStrip");
+   }
 }

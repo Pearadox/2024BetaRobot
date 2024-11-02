@@ -173,7 +173,7 @@ public class ShooterKraken extends SubsystemBase {
 
     //   rightShooter.setControl(voltage_request.withOutput(0));
     // }
-    if ((!transport.hasNote() && (((System.currentTimeMillis()) - transport.getRequestedShootTime()) > 100)) && !DriverStation.isAutonomous() && !(RobotContainer.opController.getRightTriggerAxis() >= 95)) {
+    if ((!transport.hasNote() && (((System.currentTimeMillis()) - transport.getRequestedShootTime()) > 100)) && !RobotContainer.opController.getRightBumper()) {
       leftShooter.setControl(voltage_request.withOutput(0));
       rightShooter.setControl(voltage_request.withOutput(0));
     }

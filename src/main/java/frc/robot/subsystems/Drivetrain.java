@@ -421,8 +421,11 @@ public class Drivetrain extends SubsystemBase {
   }
 /* returns the heading */
   public double getHeading(){
-    return Math.IEEEremainder(-gyro.getAngle(), 360); //clamp heading between -180 and 180
-  }
+    // if(RobotContainer.isSimulation){
+    //   return Math.IEEEremainder(-RobotContainer.gyroSimulation.getGyroReading().getDegrees(), 360);
+    // }
+      return Math.IEEEremainder(-gyro.getAngle(), 360); //clamp heading between -180 and 180
+    }
 
   public Rotation2d getHeadingRotation2d(){
     return Rotation2d.fromDegrees(getHeading());

@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.io.IOException;
 
+import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -59,10 +60,14 @@ public class Robot extends LoggedRobot {
         // new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
     } 
     else {
+      if(isSimulation()){
+        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables 
+      }else{
         setUseTiming(false); // Run as fast as possible
         String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
         Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
         Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+      }
     }
 
     // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
@@ -72,6 +77,7 @@ public class Robot extends LoggedRobot {
     // autonomous chooser on the dashboard.
     try {
       m_robotContainer = new RobotContainer();
+      // m_robotContainer.isSimulation = true;
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -177,9 +183,11 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {  }
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    // m_robotContainer.updateSimulationField();
+  }
 }
