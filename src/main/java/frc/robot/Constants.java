@@ -143,7 +143,7 @@ public final class Constants {
 
     public static final double PASSING_VOLTAGE = 6.4;
     public static final double AMP_VOLTAGE = 4.5;
-    public static final double SPEAKER_VOLTAGE = 6.0;
+    public static final double SPEAKER_VOLTAGE = 6.0 * 0.8; //changed for demo
     public static final double TRAP_VOLTAGE = 4;
 
     public static final double LEFT_TO_RIGHT_VOLTAGE_OFFSET = 2.5;

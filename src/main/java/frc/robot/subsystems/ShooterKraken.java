@@ -216,8 +216,8 @@ public class ShooterKraken extends SubsystemBase {
 
   public void setShooterAuto(double speed){
     setAutoMode();
-    leftShooter.set(speed);
-    rightShooter.set(speed);
+    leftShooter.set(speed); 
+    rightShooter.set(speed); 
   }
 
   public void pivotHold(){

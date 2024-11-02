@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 
-import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;

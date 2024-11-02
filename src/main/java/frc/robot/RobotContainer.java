@@ -76,6 +76,7 @@ public class RobotContainer {
   //public static final Climber climber = Climber.getInstance();
   public static final AmpBar ampBar = AmpBar.getInstance();
   public static final ShooterKraken shooter = ShooterKraken.getInstance();
+  public static final LEDStrip ledStrip = new LEDStrip(90,0);
 
   //Driver Controls
   public static final CommandXboxController commandDriverController = new CommandXboxController(IOConstants.DRIVER_CONTROLLER_PORT);
