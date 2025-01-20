@@ -229,15 +229,48 @@ public class Drivetrain extends SubsystemBase {
  *@param Deadband   A boolean for if it takes into account controller deadband
  */
   public void swerveDrive(double frontSpeed, double sideSpeed, double turnSpeed, 
-    boolean fieldOriented, Translation2d centerOfRotation, boolean deadband){ //Drive with rotational speed control w/ joystick
-    if(driveMode == DriveMode.Align && deadband){
+    boolean fieldOriented, Translation2d centerOfRotation, boolean deadband) { //Drive with rotational speed control w/ joystick
+      if(driveMode == DriveMode.Align && deadband){
       frontSpeed = Math.abs(frontSpeed) > 0.1 ? frontSpeed : 0;
       sideSpeed = Math.abs(sideSpeed) > 0.1 ? sideSpeed : 0;
     }
     else{
+      frontSpeed = (Math.abs(frontSpeed) > 0.1 ? frontSpeed : 0);
+      sideSpeed = (Math.abs(sideSpeed) > 0.1 ? sideSpeed : 0);
+      turnSpeed = (Math.abs(turnSpeed) > 0.1 ? turnSpeed : 0);
+    }
+
+    frontSpeed = frontLimiter.calculate(frontSpeed) * SwerveConstants.TELE_DRIVE_MAX_SPEED;
+    sideSpeed = sideLimiter.calculate(sideSpeed) * SwerveConstants.TELE_DRIVE_MAX_SPEED;
+    turnSpeed = turnLimiter.calculate(turnSpeed) * SwerveConstants.TELE_DRIVE_MAX_ANGULAR_SPEED * (RobotContainer.driverController.getRightStickButton() ? 1.25 : 1);
+
+    ChassisSpeeds chassisSpeeds;
+    if(fieldOriented){
+      chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(frontSpeed, sideSpeed, turnSpeed, getHeadingRotation2d());
+    }
+    else{
+      chassisSpeeds = new ChassisSpeeds(frontSpeed, sideSpeed, turnSpeed);
+    }
+
+    SwerveModuleState[] moduleStates = SwerveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds, centerOfRotation);
+
+    setModuleStates(moduleStates);
+  }
+
+  public void swerveDrive(double frontSpeed, double sideSpeed, double turnSpeed, 
+    boolean fieldOriented, Translation2d centerOfRotation, boolean deadband, double exponent){ //Drive with rotational speed control w/ joystick
+      frontSpeed = Math.pow(frontSpeed, exponent) * exponent % 2 == 0 ? Math.signum(frontSpeed) : 1;
+      sideSpeed = Math.pow(sideSpeed, exponent) *exponent% 2 == 0 ? Math.signum(sideSpeed) : 1;
+      turnSpeed = Math.pow(turnSpeed, exponent) * exponent % 2 == 0 ? Math.signum(turnSpeed) : 1;
+
+      if(driveMode == DriveMode.Align && deadband){
       frontSpeed = Math.abs(frontSpeed) > 0.1 ? frontSpeed : 0;
       sideSpeed = Math.abs(sideSpeed) > 0.1 ? sideSpeed : 0;
-      turnSpeed = Math.abs(turnSpeed) > 0.1 ? turnSpeed : 0;
+    }
+    else{
+      frontSpeed = (Math.abs(frontSpeed) > 0.1 ? frontSpeed : 0);
+      sideSpeed = (Math.abs(sideSpeed) > 0.1 ? sideSpeed : 0);
+      turnSpeed = (Math.abs(turnSpeed) > 0.1 ? turnSpeed : 0);
     }
 
     frontSpeed = frontLimiter.calculate(frontSpeed) * SwerveConstants.TELE_DRIVE_MAX_SPEED;

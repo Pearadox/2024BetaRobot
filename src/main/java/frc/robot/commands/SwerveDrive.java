@@ -12,11 +12,15 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ShooterKraken;
 import frc.robot.subsystems.ShooterKraken.ShooterMode;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 public class SwerveDrive extends Command {
   private Drivetrain drivetrain = Drivetrain.getInstance();
   private ShooterKraken shooter = ShooterKraken.getInstance();
   private XboxController driverController = RobotContainer.driverController;
+
+  double exponent = 1;
   
 
   /** Creates a new SwerveDrive. */
@@ -32,6 +36,7 @@ public class SwerveDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    exponent = SmartDashboard.getNumber("Exponent", 1.0);
     if(drivetrain.getDriveMode() == Drivetrain.DriveMode.Align){
       if(shooter.getShooterMode() == ShooterMode.SourcePassing){
         if(drivetrain.isRedAlliance()){
@@ -101,7 +106,7 @@ public class SwerveDrive extends Command {
         -driverController.getRightX(),
         RobotContainer.driverController.getRightTriggerAxis() < 0.9,
         new Translation2d(),
-        true);
+        true, exponent);
     }
   }
 
