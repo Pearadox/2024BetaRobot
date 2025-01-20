@@ -7,11 +7,11 @@ package frc.robot;
 import java.io.IOException;
 import java.util.List;
 
-import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.drivesims.GyroSimulation;
-import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
-import org.ironmaple.simulation.drivesims.SwerveModuleSimulation.DRIVE_WHEEL_TYPE;
+// import org.ironmaple.simulation.SimulatedArena;
+// import org.ironmaple.simulation.drivesims.GyroSimulation;
+// import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+// import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
+// import org.ironmaple.simulation.drivesims.SwerveModuleSimulation.DRIVE_WHEEL_TYPE;
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -108,7 +108,7 @@ public class RobotContainer {
   public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
   private SendableChooser<Command> autoChooser;
 
-  public static GyroSimulation gyroSimulation;
+  // public static GyroSimulation gyroSimulation;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. 
    * @throws IOException */
@@ -216,9 +216,9 @@ public class RobotContainer {
 
   public void setDefaultCommands(){
     drivetrain.setDefaultCommand(new SwerveDrive());
-    intake.setDefaultCommand(new IntakeHold());
-    shooter.setDefaultCommand(new ShooterHold());
-    climber.setDefaultCommand(new ClimberHold());
+    // intake.setDefaultCommand(new IntakeHold());
+    // shooter.setDefaultCommand(new ShooterHold());
+    // climber.setDefaultCommand(new ClimberHold());
     ampBar.setDefaultCommand(new AmpBarHold());
   }
 
