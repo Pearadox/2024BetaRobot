@@ -72,6 +72,7 @@ public class Drivetrain extends SubsystemBase {
   private GenericEntry rightBackStateEntry;
   private GenericEntry robotAngleEntry;
   private GenericEntry angularSpeedEntry;
+  private GenericEntry exponentEntry;
 
   private Field2d field = new Field2d();
   private PowerDistribution powerDistribution = new PowerDistribution();
@@ -161,6 +162,7 @@ public class Drivetrain extends SubsystemBase {
     rightBackStateEntry = swerveTab.add("Right Back Module State", rightBack.getState().toString()).withSize(4, 1).withPosition(0, 3).getEntry();
     robotAngleEntry = swerveTab.add("Robot Angle", getHeading()).withSize(1, 1).withPosition(4, 1).getEntry();
     angularSpeedEntry = swerveTab.add("Angular Speed", new DecimalFormat("#.00").format((-gyro.getRate() / 180)) + "\u03C0" + " rad/s").withSize(1, 1).withPosition(5, 1).getEntry();
+    exponentEntry = swerveTab.add("Exponent", 1.0).withSize(1, 1).withPosition(0, 5).getEntry();
   }
 
   @Override
@@ -180,6 +182,7 @@ public class Drivetrain extends SubsystemBase {
     SmarterDashboard.putData("Left Back Module State", leftBack.getState(), "Drivetrain");
     SmarterDashboard.putData("Right Back Module State", rightBack.getState(), "Drivetrain");
     SmarterDashboard.putData("Odometry", getPose(), "Drivetrain");
+    SmartDashboard.putNumber("Exponent", exponentEntry.getDouble(1.0));
 
     // SmartDashboard.putData("Swerve Drive", new Sendable() {
     //   @Override
@@ -229,36 +232,10 @@ public class Drivetrain extends SubsystemBase {
  *@param Deadband   A boolean for if it takes into account controller deadband
  */
   public void swerveDrive(double frontSpeed, double sideSpeed, double turnSpeed, 
-    boolean fieldOriented, Translation2d centerOfRotation, boolean deadband) { //Drive with rotational speed control w/ joystick
-      if(driveMode == DriveMode.Align && deadband){
-      frontSpeed = Math.abs(frontSpeed) > 0.1 ? frontSpeed : 0;
-      sideSpeed = Math.abs(sideSpeed) > 0.1 ? sideSpeed : 0;
-    }
-    else{
-      frontSpeed = (Math.abs(frontSpeed) > 0.1 ? frontSpeed : 0);
-      sideSpeed = (Math.abs(sideSpeed) > 0.1 ? sideSpeed : 0);
-      turnSpeed = (Math.abs(turnSpeed) > 0.1 ? turnSpeed : 0);
-    }
+    boolean fieldOriented, Translation2d centerOfRotation, boolean deadband){ //Drive with rotational speed control w/ joystick
 
-    frontSpeed = frontLimiter.calculate(frontSpeed) * SwerveConstants.TELE_DRIVE_MAX_SPEED;
-    sideSpeed = sideLimiter.calculate(sideSpeed) * SwerveConstants.TELE_DRIVE_MAX_SPEED;
-    turnSpeed = turnLimiter.calculate(turnSpeed) * SwerveConstants.TELE_DRIVE_MAX_ANGULAR_SPEED * (RobotContainer.driverController.getRightStickButton() ? 1.25 : 1);
+      double exponent = exponentEntry.getDouble(1.0);
 
-    ChassisSpeeds chassisSpeeds;
-    if(fieldOriented){
-      chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(frontSpeed, sideSpeed, turnSpeed, getHeadingRotation2d());
-    }
-    else{
-      chassisSpeeds = new ChassisSpeeds(frontSpeed, sideSpeed, turnSpeed);
-    }
-
-    SwerveModuleState[] moduleStates = SwerveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds, centerOfRotation);
-
-    setModuleStates(moduleStates);
-  }
-
-  public void swerveDrive(double frontSpeed, double sideSpeed, double turnSpeed, 
-    boolean fieldOriented, Translation2d centerOfRotation, boolean deadband, double exponent){ //Drive with rotational speed control w/ joystick
       frontSpeed = Math.pow(frontSpeed, exponent) * exponent % 2 == 0 ? Math.signum(frontSpeed) : 1;
       sideSpeed = Math.pow(sideSpeed, exponent) *exponent% 2 == 0 ? Math.signum(sideSpeed) : 1;
       turnSpeed = Math.pow(turnSpeed, exponent) * exponent % 2 == 0 ? Math.signum(turnSpeed) : 1;
