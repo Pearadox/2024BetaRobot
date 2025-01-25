@@ -80,6 +80,8 @@ public class Drivetrain extends SubsystemBase {
   private static final Drivetrain DRIVETRAIN = new Drivetrain();
 
   private static final Intake intake = Intake.getInstance();
+
+  private double exponent = 1;
  
   /* 
   *<p> 
@@ -162,7 +164,7 @@ public class Drivetrain extends SubsystemBase {
     rightBackStateEntry = swerveTab.add("Right Back Module State", rightBack.getState().toString()).withSize(4, 1).withPosition(0, 3).getEntry();
     robotAngleEntry = swerveTab.add("Robot Angle", getHeading()).withSize(1, 1).withPosition(4, 1).getEntry();
     angularSpeedEntry = swerveTab.add("Angular Speed", new DecimalFormat("#.00").format((-gyro.getRate() / 180)) + "\u03C0" + " rad/s").withSize(1, 1).withPosition(5, 1).getEntry();
-    exponentEntry = swerveTab.add("Exponent", 1.0).withSize(1, 1).withPosition(0, 5).getEntry();
+    exponentEntry = swerveTab.add("Exponent", 1.0).withSize(1, 1).withPosition(4, 2).getEntry();
   }
 
   @Override
@@ -182,7 +184,6 @@ public class Drivetrain extends SubsystemBase {
     SmarterDashboard.putData("Left Back Module State", leftBack.getState(), "Drivetrain");
     SmarterDashboard.putData("Right Back Module State", rightBack.getState(), "Drivetrain");
     SmarterDashboard.putData("Odometry", getPose(), "Drivetrain");
-    SmartDashboard.putNumber("Exponent", exponentEntry.getDouble(1.0));
 
     // SmartDashboard.putData("Swerve Drive", new Sendable() {
     //   @Override
@@ -233,14 +234,9 @@ public class Drivetrain extends SubsystemBase {
  */
   public void swerveDrive(double frontSpeed, double sideSpeed, double turnSpeed, 
     boolean fieldOriented, Translation2d centerOfRotation, boolean deadband){ //Drive with rotational speed control w/ joystick
+    exponent = exponentEntry.getDouble(1.0);
 
-      double exponent = exponentEntry.getDouble(1.0);
-
-      frontSpeed = Math.pow(frontSpeed, exponent) * exponent % 2 == 0 ? Math.signum(frontSpeed) : 1;
-      sideSpeed = Math.pow(sideSpeed, exponent) *exponent% 2 == 0 ? Math.signum(sideSpeed) : 1;
-      turnSpeed = Math.pow(turnSpeed, exponent) * exponent % 2 == 0 ? Math.signum(turnSpeed) : 1;
-
-      if(driveMode == DriveMode.Align && deadband){
+    if(driveMode == DriveMode.Align && deadband){
       frontSpeed = Math.abs(frontSpeed) > 0.1 ? frontSpeed : 0;
       sideSpeed = Math.abs(sideSpeed) > 0.1 ? sideSpeed : 0;
     }
@@ -249,6 +245,13 @@ public class Drivetrain extends SubsystemBase {
       sideSpeed = (Math.abs(sideSpeed) > 0.1 ? sideSpeed : 0);
       turnSpeed = (Math.abs(turnSpeed) > 0.1 ? turnSpeed : 0);
     }
+
+    
+    frontSpeed = Math.pow(frontSpeed, exponent) * (exponent%2 == 0 ? Math.signum(frontSpeed) : 1);
+    sideSpeed = Math.pow(sideSpeed, exponent) * (exponent%2 == 0 ? Math.signum(sideSpeed) : 1);
+    turnSpeed = Math.pow(turnSpeed, exponent) * (exponent%2 == 0 ? Math.signum(turnSpeed) : 1);
+
+    
 
     frontSpeed = frontLimiter.calculate(frontSpeed) * SwerveConstants.TELE_DRIVE_MAX_SPEED;
     sideSpeed = sideLimiter.calculate(sideSpeed) * SwerveConstants.TELE_DRIVE_MAX_SPEED;
