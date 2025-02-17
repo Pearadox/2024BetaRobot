@@ -105,7 +105,7 @@ public class Drivetrain extends SubsystemBase {
     leftFront = new SwerveModule(
       SwerveConstants.LEFT_FRONT_DRIVE_ID, 
       SwerveConstants.LEFT_FRONT_TURN_ID, 
-      false, 
+      true, 
       true, 
       SwerveConstants.LEFT_FRONT_CANCODER_ID, 
       SwerveConstants.LEFT_FRONT_OFFSET);
