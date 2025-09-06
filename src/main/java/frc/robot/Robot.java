@@ -6,7 +6,7 @@ package frc.robot;
 
 import java.io.IOException;
 
-import org.ironmaple.simulation.SimulatedArena;
+// import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
