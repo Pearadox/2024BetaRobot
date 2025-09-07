@@ -102,7 +102,7 @@ public class Drivetrain extends SubsystemBase {
     leftFront = new SwerveModule(
       SwerveConstants.LEFT_FRONT_DRIVE_ID, 
       SwerveConstants.LEFT_FRONT_TURN_ID, 
-      false, 
+      true, 
       true, 
       SwerveConstants.LEFT_FRONT_CANCODER_ID, 
       SwerveConstants.LEFT_FRONT_OFFSET);
@@ -242,7 +242,7 @@ public class Drivetrain extends SubsystemBase {
 
     frontSpeed = frontLimiter.calculate(frontSpeed) * SwerveConstants.TELE_DRIVE_MAX_SPEED;
     sideSpeed = sideLimiter.calculate(sideSpeed) * SwerveConstants.TELE_DRIVE_MAX_SPEED;
-    turnSpeed = turnLimiter.calculate(turnSpeed) * SwerveConstants.TELE_DRIVE_MAX_ANGULAR_SPEED * (RobotContainer.driverController.getRightStickButton() ? 1.25 : 1);
+    turnSpeed = turnLimiter.calculate(turnSpeed) * SwerveConstants.TELE_DRIVE_MAX_ANGULAR_SPEED * (RobotContainer.opController.getRightStickButton() ? 1.25 : 1);
 
     ChassisSpeeds chassisSpeeds;
     if(fieldOriented){

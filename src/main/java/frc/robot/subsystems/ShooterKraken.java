@@ -77,6 +77,7 @@ public class ShooterKraken extends SubsystemBase {
   private GenericEntry pivotAdjustEntry;
   private GenericEntry hasPriorityTargetEntry;
   private VoltageOut voltage_request = new VoltageOut(0);
+  private boolean shooting = false;
 
   public ShooterKraken() {
     leftShooter = new PearadoxTalonFX(ShooterConstants.LEFT_SHOOTER_ID, NeutralModeValue.Coast, 50, true); 
@@ -164,6 +165,10 @@ public class ShooterKraken extends SubsystemBase {
     hasPriorityTargetEntry.setBoolean(hasPriorityTarget());
   }
 
+  public void setShooting(boolean flag) {
+    shooting = flag;
+  }
+
   public void shooterHold(){
     double shooterVoltage = shooterLerp.interpolate(calculatePivotAngle());
     SmarterDashboard.putNumber("Shooter Auto Voltage", shooterVoltage, "Shooter");
@@ -173,7 +178,11 @@ public class ShooterKraken extends SubsystemBase {
 
     //   rightShooter.setControl(voltage_request.withOutput(0));
     // }
-    if ((!transport.hasNote() && (((System.currentTimeMillis()) - transport.getRequestedShootTime()) > 100)) && !RobotContainer.opController.getRightBumper()) {
+    // if ((!transport.hasNote() && (((System.currentTimeMillis()) - transport.getRequestedShootTime()) > 100)) && !RobotContainer.opController.getRightBumper()) {
+    //   leftShooter.setControl(voltage_request.withOutput(0));
+    //   rightShooter.setControl(voltage_request.withOutput(0));
+    // }
+    if (!shooting) {
       leftShooter.setControl(voltage_request.withOutput(0));
       rightShooter.setControl(voltage_request.withOutput(0));
     }
@@ -280,6 +289,12 @@ public class ShooterKraken extends SubsystemBase {
       pivotAdjust += 0.1;
     }
     else if(RobotContainer.opController.getPOV() == 180){
+      pivotAdjust -= 0.1;
+    } 
+    else if(RobotContainer.driverController.getPOV() == 0){
+      pivotAdjust += 0.1;
+    }
+    else if(RobotContainer.driverController.getPOV() == 180){
       pivotAdjust -= 0.1;
     }
   }

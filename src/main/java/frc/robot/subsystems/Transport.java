@@ -50,27 +50,31 @@ public class Transport extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmarterDashboard.putBoolean("Ir Sensor", hasNote(), "Transport");
+    SmarterDashboard.putBoolean("Ir Sensor Raw", irSensor.get(), "Transport");
+    SmarterDashboard.putBoolean("Ir Sensor isAnalog", irSensor.isAnalogTrigger(), "Transport");
     SmarterDashboard.putNumber("Transport Current", transportMotor.getOutputCurrent(), "Transport");
+    SmarterDashboard.putNumber("Transport Speed", transportMotor.getAppliedOutput(), "Transport");
+    SmarterDashboard.putNumber("Transport Temp", transportMotor.getMotorTemperature(), "Transport");
 
     // if(RobotContainer.climber.getClimbSequenceStep() >= 3){
     //   transportShoot();
     // }
-    if(isHolding){
-      if(hasNote()){
-        transportStop();
-      }
-      else{
-        transportHold();
-      }
-    }
+    // if(isHolding){
+    //   if(hasNote()){
+    //     transportStop();
+    //   }
+    //   else{
+    //     transportHold();
+    //   }
+    // }
 
-    if(!rumbled && hasNote()){
-      CommandScheduler.getInstance().schedule(rumbleController());
-      rumbled = true;
-    }
-    if(rumbled && !hasNote()){
-      rumbled = false;
-    }
+    // if(!rumbled && hasNote()){
+    //   CommandScheduler.getInstance().schedule(rumbleController());
+    //   rumbled = true;
+    // }
+    // if(rumbled && !hasNote()){
+    //   rumbled = false;
+    // }
   }
 
   public void transportHold(){
@@ -83,10 +87,11 @@ public class Transport extends SubsystemBase {
 
   public void transportStop(){
     transportMotor.set(0);
+    // transportHold();
   }
 
-  public void transportShoot(){    
-    shootTime = System.currentTimeMillis();
+  public void transportShoot(){ 
+    // shootTime = System.currentTimeMillis();
     transportMotor.set(1);
   }
 
