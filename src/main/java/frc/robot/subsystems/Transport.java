@@ -92,7 +92,7 @@ public class Transport extends SubsystemBase {
 
   public void transportShoot(){ 
     // shootTime = System.currentTimeMillis();
-    transportMotor.set(1);
+    transportMotor.set(.5);
   }
 
   public void setBrakeMode(boolean brake){

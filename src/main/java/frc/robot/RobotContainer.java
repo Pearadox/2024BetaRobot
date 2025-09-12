@@ -142,12 +142,16 @@ public class RobotContainer {
   private void configureBindings() {
     // Buttons
     driver.start().or(operator.start()).onTrue(new InstantCommand(drivetrain::zeroHeading, drivetrain));
+
     operator.back().whileTrue(new RunCommand(() -> shooter.setZeroing(true)))
       .onFalse(new InstantCommand(() -> shooter.setZeroing(false))
       .andThen(new InstantCommand(() -> shooter.resetPivotEncoder())));
-    driver.rightBumper().onFalse(new RunCommand(() -> { transport.transportShoot(); shooter.setShooting(true); }, transport).withTimeout(5).andThen(new InstantCommand(() -> shooter.setShooting(false))));
-    operator.b().whileTrue(new Outtake());
-    operator.leftBumper().whileTrue(new InstantCommand(() -> intake.utbIntakeIn()))
+
+    driver.rightBumper().or(operator.rightBumper()).whileTrue(new RunCommand(() ->  shooter.setShooting(true)).withTimeout(.6).andThen(new InstantCommand(()->transport.transportShoot())))
+      .onFalse(new InstantCommand(() -> { transport.transportStop(); shooter.setShooting(false);}));
+
+    operator.b().whileTrue(new Outtake()).onFalse(new InstantCommand(() -> {transport.transportStop(); intake.utbIntakeStop();}));
+    operator.leftBumper().whileTrue(new InstantCommand(() -> { intake.utbIntakeIn(); transport.transportHold();})).onFalse(new InstantCommand(() -> { intake.utbIntakeStop(); transport.transportStop(); }))
       .onFalse(new InstantCommand(() -> intake.utbIntakeStop())); //intakes
     // shooterSpeakerMode_Y.onTrue(new InstantCommand(() -> shooter.setSpeakerMode()));
 
