@@ -32,6 +32,10 @@ public class SwerveDrive extends Command {
   public void execute() {
     double v_y = -opController.getLeftY();
     double v_x = -opController.getLeftX();
+    if (Math.hypot(v_x, v_y) < 0.15) {
+      v_y = -driverController.getLeftY();
+      v_x = -driverController.getLeftX();
+    }
     
     double v_omega = -opController.getRightX();
     if (Math.abs(v_omega) < 0.15) {

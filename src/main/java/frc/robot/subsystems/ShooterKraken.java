@@ -133,9 +133,9 @@ public class ShooterKraken extends SubsystemBase {
     shooterLerp.addPoint(11.5, 10.75);
 
     driverTab = Shuffleboard.getTab("Driver");
-    leftShooterSpeedEntry = driverTab.add("Left Shooter Speed", 7)
+    leftShooterSpeedEntry = driverTab.add("Left Shooter Speed", 4.414)
       .withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 12)).withPosition(2, 0).getEntry();
-    rightShooterSpeedEntry = driverTab.add("Right Shooter Speed", 4)
+    rightShooterSpeedEntry = driverTab.add("Right Shooter Speed", 3.005)
       .withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 12)).withPosition(2, 1).getEntry();
     shooterModeEntry = driverTab.add("Shooter Mode", shooterMode.toString()).withPosition(2, 2).getEntry();
     pivotAdjustEntry = driverTab.add("Shooter Pivot Adjust", pivotAdjust).withPosition(3, 2).getEntry();
@@ -212,9 +212,9 @@ public class ShooterKraken extends SubsystemBase {
       rightShooter.setControl(voltage_request.withOutput(2.3));
     }
     else if(shooterMode == ShooterMode.Manual){
-      leftShooter.setControl(voltage_request.withOutput(leftShooterSpeedEntry.getDouble(7)));
+      leftShooter.setControl(voltage_request.withOutput(leftShooterSpeedEntry.getDouble(4.414)));
 
-      rightShooter.setControl(voltage_request.withOutput(rightShooterSpeedEntry.getDouble(4)));
+      rightShooter.setControl(voltage_request.withOutput(rightShooterSpeedEntry.getDouble(3.005)));
     }
     else{
       leftShooter.setControl(voltage_request.withOutput(shooterVoltage));

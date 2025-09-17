@@ -126,7 +126,7 @@ public final class Constants {
     public static final double RIGHT_SHOOTER_kD = 0;
 
     public static final double SHOOTER_MIN_OUTPUT = -1.0;
-    public static final double SHOOTER_MAX_OUTPUT = .5; 
+    public static final double SHOOTER_MAX_OUTPUT = 1.0; 
 
     public static final double PIVOT_kP = 0.09; 
     public static final double PIVOT_kI = 0.00008;
