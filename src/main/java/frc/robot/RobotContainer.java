@@ -150,8 +150,8 @@ public class RobotContainer {
     driver.rightBumper().or(operator.rightBumper()).whileTrue(new RunCommand(() ->  shooter.setShooting(true)).withTimeout(.6).andThen(new InstantCommand(()->transport.transportShoot())))
       .onFalse(new InstantCommand(() -> { transport.transportStop(); shooter.setShooting(false);}));
 
-    operator.b().whileTrue(new Outtake()).onFalse(new InstantCommand(() -> {transport.transportStop(); intake.utbIntakeStop();}));
-    operator.leftBumper().whileTrue(new InstantCommand(() -> { intake.utbIntakeIn(); transport.transportHold();})).onFalse(new InstantCommand(() -> { intake.utbIntakeStop(); transport.transportStop(); }))
+    driver.b().or(operator.b()).whileTrue(new Outtake()).onFalse(new InstantCommand(() -> {transport.transportStop(); intake.utbIntakeStop();}));
+    driver.leftBumper().or(operator.leftBumper()).whileTrue(new InstantCommand(() -> { intake.utbIntakeIn(); transport.transportHold();})).onFalse(new InstantCommand(() -> { intake.utbIntakeStop(); transport.transportStop(); }))
       .onFalse(new InstantCommand(() -> intake.utbIntakeStop())); //intakes
     // shooterSpeakerMode_Y.onTrue(new InstantCommand(() -> shooter.setSpeakerMode()));
 
